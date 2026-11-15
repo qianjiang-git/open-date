@@ -1,0 +1,16 @@
+.venv/
+vexo-open-kit/
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+.DS_Store
+.pytest_cache/
+
+# Vexo Match demo state and secrets
+*.local.json
+server/*.db
+server/*.db-*
+recordings/
+demo/hardware_validation*.json

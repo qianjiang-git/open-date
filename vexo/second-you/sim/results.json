@@ -1,0 +1,2382 @@
+{
+ "summary": {
+  "n_pairs": 82,
+  "agent_model": "gemini-3.8-flash",
+  "judge_model": "gpt-5.5",
+  "turns": 6,
+  "judge": {
+   "spearman": 0.727,
+   "auc_top_quartile": 0.886,
+   "mean": 0.391,
+   "sd": 0.248
+  },
+  "combined": {
+   "spearman": 0.709,
+   "auc_top_quartile": 0.901,
+   "mean": 0.39,
+   "sd": 0.243
+  },
+  "lsm": {
+   "spearman": 0.027,
+   "auc_top_quartile": 0.665,
+   "mean": 0.787,
+   "sd": 0.075
+  },
+  "self": {
+   "spearman": 0.218,
+   "auc_top_quartile": 0.623,
+   "mean": 0.778,
+   "sd": 0.051
+  },
+  "dealbreakers": {
+   "true": 43,
+   "caught": 41,
+   "false_alarms": 8,
+   "recall": 0.953,
+   "precision": 0.837
+  },
+  "match_rule_0.5": {
+   "matched": 20,
+   "of_them_truly_top_quartile": 13,
+   "of_them_with_dealbreaker": 1
+  },
+  "match_rule_0.6": {
+   "matched": 12,
+   "of_them_truly_top_quartile": 8,
+   "of_them_with_dealbreaker": 1
+  },
+  "match_rule_0.7": {
+   "matched": 0,
+   "of_them_truly_top_quartile": 0,
+   "of_them_with_dealbreaker": 0
+  },
+  "best_match": {
+   "people": 18,
+   "top1_hit": 7,
+   "mean_true_rank_of_pick": 2.67,
+   "candidates_per_person": 8.2
+  }
+ },
+ "pairs": [
+  {
+   "pair": [
+    "p00",
+    "p09"
+   ],
+   "names": [
+    "Maya",
+    "Daniel"
+   ],
+   "truth": 0.183,
+   "truth_dealbreakers": [
+    "same_faith"
+   ],
+   "judge": 0.169,
+   "ci": [
+    0.049,
+    0.289
+   ],
+   "per_scenario": [
+    0.38,
+    0.82,
+    0.25
+   ],
+   "clash": true,
+   "lsm": 0.825,
+   "self": 0.7,
+   "lsm_n": 0.7268408551068883,
+   "combined": 0.182
+  },
+  {
+   "pair": [
+    "p00",
+    "p10"
+   ],
+   "names": [
+    "Maya",
+    "Kevin"
+   ],
+   "truth": 0.165,
+   "truth_dealbreakers": [
+    "same_faith"
+   ],
+   "judge": 0.166,
+   "ci": [
+    0.052,
+    0.28
+   ],
+   "per_scenario": [
+    0.38,
+    0.8,
+    0.25
+   ],
+   "clash": true,
+   "lsm": 0.83,
+   "self": 0.7,
+   "lsm_n": 0.7387173396674585,
+   "combined": 0.18
+  },
+  {
+   "pair": [
+    "p00",
+    "p11"
+   ],
+   "names": [
+    "Maya",
+    "Marcus"
+   ],
+   "truth": 0.82,
+   "truth_dealbreakers": [],
+   "judge": 0.575,
+   "ci": [
+    0.371,
+    0.779
+   ],
+   "per_scenario": [
+    0.53,
+    0.77,
+    0.43
+   ],
+   "clash": false,
+   "lsm": 0.811,
+   "self": 0.75,
+   "lsm_n": 0.6935866983372924,
+   "combined": 0.593
+  },
+  {
+   "pair": [
+    "p00",
+    "p12"
+   ],
+   "names": [
+    "Maya",
+    "Leo"
+   ],
+   "truth": 0.672,
+   "truth_dealbreakers": [],
+   "judge": 0.642,
+   "ci": [
+    0.496,
+    0.787
+   ],
+   "per_scenario": [
+    0.68,
+    0.75,
+    0.5
+   ],
+   "clash": false,
+   "lsm": 0.762,
+   "self": 0.8,
+   "lsm_n": 0.5771971496437055,
+   "combined": 0.632
+  },
+  {
+   "pair": [
+    "p00",
+    "p13"
+   ],
+   "names": [
+    "Maya",
+    "Sam"
+   ],
+   "truth": 0.675,
+   "truth_dealbreakers": [],
+   "judge": 0.193,
+   "ci": [
+    0.066,
+    0.319
+   ],
+   "per_scenario": [
+    0.62,
+    0.82,
+    0.2
+   ],
+   "clash": true,
+   "lsm": 0.636,
+   "self": 0.75,
+   "lsm_n": 0.2779097387173397,
+   "combined": 0.179
+  },
+  {
+   "pair": [
+    "p00",
+    "p14"
+   ],
+   "names": [
+    "Maya",
+    "Arjun"
+   ],
+   "truth": 0.69,
+   "truth_dealbreakers": [],
+   "judge": 0.683,
+   "ci": [
+    0.538,
+    0.829
+   ],
+   "per_scenario": [
+    0.57,
+    0.82,
+    0.65
+   ],
+   "clash": false,
+   "lsm": 0.827,
+   "self": 0.75,
+   "lsm_n": 0.7315914489311164,
+   "combined": 0.69
+  },
+  {
+   "pair": [
+    "p00",
+    "p15"
+   ],
+   "names": [
+    "Maya",
+    "Ethan"
+   ],
+   "truth": 0.595,
+   "truth_dealbreakers": [],
+   "judge": 0.175,
+   "ci": [
+    0.035,
+    0.315
+   ],
+   "per_scenario": [
+    0.62,
+    0.77,
+    0.1
+   ],
+   "clash": true,
+   "lsm": 0.714,
+   "self": 0.7,
+   "lsm_n": 0.46318289786223277,
+   "combined": 0.173
+  },
+  {
+   "pair": [
+    "p00",
+    "p16"
+   ],
+   "names": [
+    "Maya",
+    "Tomás"
+   ],
+   "truth": 0.229,
+   "truth_dealbreakers": [
+    "no_heavy_drinker"
+   ],
+   "judge": 0.525,
+   "ci": [
+    0.339,
+    0.711
+   ],
+   "per_scenario": [
+    0.38,
+    0.7,
+    0.5
+   ],
+   "clash": false,
+   "lsm": 0.793,
+   "self": 0.7,
+   "lsm_n": 0.6508313539192401,
+   "combined": 0.544
+  },
+  {
+   "pair": [
+    "p00",
+    "p17"
+   ],
+   "names": [
+    "Maya",
+    "Ben"
+   ],
+   "truth": 0.662,
+   "truth_dealbreakers": [],
+   "judge": 0.583,
+   "ci": [
+    0.399,
+    0.767
+   ],
+   "per_scenario": [
+    0.57,
+    0.75,
+    0.43
+   ],
+   "clash": false,
+   "lsm": 0.519,
+   "self": 0.8,
+   "lsm_n": 0.0,
+   "combined": 0.496
+  },
+  {
+   "pair": [
+    "p01",
+    "p09"
+   ],
+   "names": [
+    "Priya",
+    "Daniel"
+   ],
+   "truth": 0.174,
+   "truth_dealbreakers": [
+    "no_kids",
+    "same_faith"
+   ],
+   "judge": 0.19,
+   "ci": [
+    0.017,
+    0.362
+   ],
+   "per_scenario": [
+    0.7,
+    0.88,
+    0.05
+   ],
+   "clash": true,
+   "lsm": 0.799,
+   "self": 0.75,
+   "lsm_n": 0.6650831353919242,
+   "combined": 0.196
+  },
+  {
+   "pair": [
+    "p01",
+    "p10"
+   ],
+   "names": [
+    "Priya",
+    "Kevin"
+   ],
+   "truth": 0.179,
+   "truth_dealbreakers": [
+    "same_faith"
+   ],
+   "judge": 0.19,
+   "ci": [
+    0.077,
+    0.302
+   ],
+   "per_scenario": [
+    0.62,
+    0.77,
+    0.22
+   ],
+   "clash": true,
+   "lsm": 0.787,
+   "self": 0.7,
+   "lsm_n": 0.6365795724465559,
+   "combined": 0.195
+  },
+  {
+   "pair": [
+    "p01",
+    "p11"
+   ],
+   "names": [
+    "Priya",
+    "Marcus"
+   ],
+   "truth": 0.794,
+   "truth_dealbreakers": [],
+   "judge": 0.708,
+   "ci": [
+    0.526,
+    0.89
+   ],
+   "per_scenario": [
+    0.53,
+    0.82,
+    0.77
+   ],
+   "clash": false,
+   "lsm": 0.752,
+   "self": 0.8,
+   "lsm_n": 0.5534441805225654,
+   "combined": 0.685
+  },
+  {
+   "pair": [
+    "p01",
+    "p12"
+   ],
+   "names": [
+    "Priya",
+    "Leo"
+   ],
+   "truth": 0.68,
+   "truth_dealbreakers": [],
+   "judge": 0.583,
+   "ci": [
+    0.418,
+    0.749
+   ],
+   "per_scenario": [
+    0.53,
+    0.75,
+    0.47
+   ],
+   "clash": false,
+   "lsm": 0.605,
+   "self": 0.8,
+   "lsm_n": 0.20427553444180518,
+   "combined": 0.526
+  },
+  {
+   "pair": [
+    "p01",
+    "p13"
+   ],
+   "names": [
+    "Priya",
+    "Sam"
+   ],
+   "truth": 0.197,
+   "truth_dealbreakers": [
+    "stay_sf"
+   ],
+   "judge": 0.163,
+   "ci": [
+    0.034,
+    0.293
+   ],
+   "per_scenario": [
+    0.57,
+    0.72,
+    0.1
+   ],
+   "clash": true,
+   "lsm": 0.803,
+   "self": 0.6,
+   "lsm_n": 0.6745843230403802,
+   "combined": 0.174
+  },
+  {
+   "pair": [
+    "p01",
+    "p14"
+   ],
+   "names": [
+    "Priya",
+    "Arjun"
+   ],
+   "truth": 0.764,
+   "truth_dealbreakers": [],
+   "judge": 0.204,
+   "ci": [
+    0.053,
+    0.356
+   ],
+   "per_scenario": [
+    0.72,
+    0.88,
+    0.15
+   ],
+   "clash": true,
+   "lsm": 0.864,
+   "self": 0.85,
+   "lsm_n": 0.819477434679335,
+   "combined": 0.216
+  },
+  {
+   "pair": [
+    "p01",
+    "p15"
+   ],
+   "names": [
+    "Priya",
+    "Ethan"
+   ],
+   "truth": 0.201,
+   "truth_dealbreakers": [
+    "stay_sf"
+   ],
+   "judge": 0.17,
+   "ci": [
+    0.035,
+    0.305
+   ],
+   "per_scenario": [
+    0.57,
+    0.77,
+    0.11
+   ],
+   "clash": true,
+   "lsm": 0.783,
+   "self": 0.8,
+   "lsm_n": 0.6270783847980999,
+   "combined": 0.177
+  },
+  {
+   "pair": [
+    "p01",
+    "p16"
+   ],
+   "names": [
+    "Priya",
+    "Tomás"
+   ],
+   "truth": 0.738,
+   "truth_dealbreakers": [],
+   "judge": 0.73,
+   "ci": [
+    0.571,
+    0.889
+   ],
+   "per_scenario": [
+    0.62,
+    0.89,
+    0.68
+   ],
+   "clash": false,
+   "lsm": 0.881,
+   "self": 0.75,
+   "lsm_n": 0.8598574821852732,
+   "combined": 0.749
+  },
+  {
+   "pair": [
+    "p01",
+    "p17"
+   ],
+   "names": [
+    "Priya",
+    "Ben"
+   ],
+   "truth": 0.71,
+   "truth_dealbreakers": [],
+   "judge": 0.675,
+   "ci": [
+    0.505,
+    0.845
+   ],
+   "per_scenario": [
+    0.53,
+    0.82,
+    0.68
+   ],
+   "clash": false,
+   "lsm": 0.815,
+   "self": 0.7,
+   "lsm_n": 0.7030878859857481,
+   "combined": 0.679
+  },
+  {
+   "pair": [
+    "p02",
+    "p09"
+   ],
+   "names": [
+    "Sofia",
+    "Daniel"
+   ],
+   "truth": 0.221,
+   "truth_dealbreakers": [
+    "same_faith"
+   ],
+   "judge": 0.207,
+   "ci": [
+    0.075,
+    0.339
+   ],
+   "per_scenario": [
+    0.68,
+    0.88,
+    0.23
+   ],
+   "clash": true,
+   "lsm": 0.784,
+   "self": 0.8,
+   "lsm_n": 0.6294536817102139,
+   "combined": 0.209
+  },
+  {
+   "pair": [
+    "p02",
+    "p10"
+   ],
+   "names": [
+    "Sofia",
+    "Kevin"
+   ],
+   "truth": 0.211,
+   "truth_dealbreakers": [
+    "same_faith"
+   ],
+   "judge": 0.21,
+   "ci": [
+    0.084,
+    0.336
+   ],
+   "per_scenario": [
+    0.68,
+    0.88,
+    0.25
+   ],
+   "clash": true,
+   "lsm": 0.761,
+   "self": 0.8,
+   "lsm_n": 0.5748218527315915,
+   "combined": 0.209
+  },
+  {
+   "pair": [
+    "p02",
+    "p11"
+   ],
+   "names": [
+    "Sofia",
+    "Marcus"
+   ],
+   "truth": 0.244,
+   "truth_dealbreakers": [
+    "no_kids",
+    "wants_kids"
+   ],
+   "judge": 0.181,
+   "ci": [
+    0.037,
+    0.324
+   ],
+   "per_scenario": [
+    0.53,
+    0.88,
+    0.15
+   ],
+   "clash": true,
+   "lsm": 0.835,
+   "self": 0.7,
+   "lsm_n": 0.7505938242280285,
+   "combined": 0.193
+  },
+  {
+   "pair": [
+    "p02",
+    "p12"
+   ],
+   "names": [
+    "Sofia",
+    "Leo"
+   ],
+   "truth": 0.209,
+   "truth_dealbreakers": [
+    "no_kids"
+   ],
+   "judge": 0.195,
+   "ci": [
+    0.084,
+    0.307
+   ],
+   "per_scenario": [
+    0.62,
+    0.8,
+    0.25
+   ],
+   "clash": true,
+   "lsm": 0.622,
+   "self": 0.9,
+   "lsm_n": 0.24465558194774345,
+   "combined": 0.179
+  },
+  {
+   "pair": [
+    "p02",
+    "p13"
+   ],
+   "names": [
+    "Sofia",
+    "Sam"
+   ],
+   "truth": 0.235,
+   "truth_dealbreakers": [
+    "no_kids",
+    "wants_kids"
+   ],
+   "judge": 0.213,
+   "ci": [
+    0.092,
+    0.334
+   ],
+   "per_scenario": [
+    0.68,
+    0.88,
+    0.28
+   ],
+   "clash": true,
+   "lsm": 0.823,
+   "self": 0.8,
+   "lsm_n": 0.7220902612826603,
+   "combined": 0.219
+  },
+  {
+   "pair": [
+    "p02",
+    "p14"
+   ],
+   "names": [
+    "Sofia",
+    "Arjun"
+   ],
+   "truth": 0.767,
+   "truth_dealbreakers": [],
+   "judge": 0.755,
+   "ci": [
+    0.683,
+    0.827
+   ],
+   "per_scenario": [
+    0.7,
+    0.82,
+    0.74
+   ],
+   "clash": false,
+   "lsm": 0.776,
+   "self": 0.8,
+   "lsm_n": 0.6104513064133018,
+   "combined": 0.733
+  },
+  {
+   "pair": [
+    "p02",
+    "p15"
+   ],
+   "names": [
+    "Sofia",
+    "Ethan"
+   ],
+   "truth": 0.198,
+   "truth_dealbreakers": [
+    "no_kids",
+    "wants_kids"
+   ],
+   "judge": 0.194,
+   "ci": [
+    0.037,
+    0.351
+   ],
+   "per_scenario": [
+    0.68,
+    0.88,
+    0.11
+   ],
+   "clash": true,
+   "lsm": 0.835,
+   "self": 0.8,
+   "lsm_n": 0.7505938242280285,
+   "combined": 0.204
+  },
+  {
+   "pair": [
+    "p02",
+    "p16"
+   ],
+   "names": [
+    "Sofia",
+    "Tomás"
+   ],
+   "truth": 0.194,
+   "truth_dealbreakers": [
+    "no_kids"
+   ],
+   "judge": 0.184,
+   "ci": [
+    0.034,
+    0.333
+   ],
+   "per_scenario": [
+    0.57,
+    0.88,
+    0.12
+   ],
+   "clash": true,
+   "lsm": 0.77,
+   "self": 0.8,
+   "lsm_n": 0.5961995249406177,
+   "combined": 0.188
+  },
+  {
+   "pair": [
+    "p02",
+    "p17"
+   ],
+   "names": [
+    "Sofia",
+    "Ben"
+   ],
+   "truth": 0.204,
+   "truth_dealbreakers": [
+    "no_kids",
+    "wants_kids"
+   ],
+   "judge": 0.201,
+   "ci": [
+    0.106,
+    0.297
+   ],
+   "per_scenario": [
+    0.68,
+    0.75,
+    0.3
+   ],
+   "clash": true,
+   "lsm": 0.813,
+   "self": 0.8,
+   "lsm_n": 0.6983372921615202,
+   "combined": 0.208
+  },
+  {
+   "pair": [
+    "p03",
+    "p09"
+   ],
+   "names": [
+    "Hannah",
+    "Daniel"
+   ],
+   "truth": 0.2,
+   "truth_dealbreakers": [
+    "same_faith"
+   ],
+   "judge": 0.195,
+   "ci": [
+    0.068,
+    0.323
+   ],
+   "per_scenario": [
+    0.65,
+    0.82,
+    0.2
+   ],
+   "clash": true,
+   "lsm": 0.783,
+   "self": 0.8,
+   "lsm_n": 0.6270783847980999,
+   "combined": 0.199
+  },
+  {
+   "pair": [
+    "p03",
+    "p10"
+   ],
+   "names": [
+    "Hannah",
+    "Kevin"
+   ],
+   "truth": 0.19,
+   "truth_dealbreakers": [
+    "same_faith"
+   ],
+   "judge": 0.191,
+   "ci": [
+    0.035,
+    0.348
+   ],
+   "per_scenario": [
+    0.69,
+    0.85,
+    0.1
+   ],
+   "clash": true,
+   "lsm": 0.821,
+   "self": 0.75,
+   "lsm_n": 0.7173396674584323,
+   "combined": 0.2
+  },
+  {
+   "pair": [
+    "p03",
+    "p11"
+   ],
+   "names": [
+    "Hannah",
+    "Marcus"
+   ],
+   "truth": 0.255,
+   "truth_dealbreakers": [
+    "no_kids",
+    "wants_kids"
+   ],
+   "judge": 0.219,
+   "ci": [
+    0.072,
+    0.365
+   ],
+   "per_scenario": [
+    0.8,
+    0.88,
+    0.2
+   ],
+   "clash": true,
+   "lsm": 0.789,
+   "self": 0.9,
+   "lsm_n": 0.641330166270784,
+   "combined": 0.22
+  },
+  {
+   "pair": [
+    "p03",
+    "p12"
+   ],
+   "names": [
+    "Hannah",
+    "Leo"
+   ],
+   "truth": 0.188,
+   "truth_dealbreakers": [
+    "no_kids"
+   ],
+   "judge": 0.178,
+   "ci": [
+    0.086,
+    0.27
+   ],
+   "per_scenario": [
+    0.57,
+    0.7,
+    0.25
+   ],
+   "clash": true,
+   "lsm": 0.615,
+   "self": 0.75,
+   "lsm_n": 0.22802850356294535,
+   "combined": 0.163
+  },
+  {
+   "pair": [
+    "p03",
+    "p13"
+   ],
+   "names": [
+    "Hannah",
+    "Sam"
+   ],
+   "truth": 0.199,
+   "truth_dealbreakers": [
+    "no_kids",
+    "wants_kids"
+   ],
+   "judge": 0.155,
+   "ci": [
+    0.004,
+    0.305
+   ],
+   "per_scenario": [
+    0.38,
+    0.85,
+    0.1
+   ],
+   "clash": true,
+   "lsm": 0.724,
+   "self": 0.7,
+   "lsm_n": 0.48693586698337293,
+   "combined": 0.157
+  },
+  {
+   "pair": [
+    "p03",
+    "p14"
+   ],
+   "names": [
+    "Hannah",
+    "Arjun"
+   ],
+   "truth": 0.774,
+   "truth_dealbreakers": [],
+   "judge": 0.792,
+   "ci": [
+    0.652,
+    0.931
+   ],
+   "per_scenario": [
+    0.65,
+    0.88,
+    0.85
+   ],
+   "clash": false,
+   "lsm": 0.928,
+   "self": 0.85,
+   "lsm_n": 0.9714964370546321,
+   "combined": 0.819
+  },
+  {
+   "pair": [
+    "p03",
+    "p15"
+   ],
+   "names": [
+    "Hannah",
+    "Ethan"
+   ],
+   "truth": 0.2,
+   "truth_dealbreakers": [
+    "no_kids",
+    "wants_kids"
+   ],
+   "judge": 0.178,
+   "ci": [
+    0.037,
+    0.319
+   ],
+   "per_scenario": [
+    0.68,
+    0.75,
+    0.1
+   ],
+   "clash": true,
+   "lsm": 0.893,
+   "self": 0.85,
+   "lsm_n": 0.8883610451306415,
+   "combined": 0.198
+  },
+  {
+   "pair": [
+    "p03",
+    "p16"
+   ],
+   "names": [
+    "Hannah",
+    "Tomás"
+   ],
+   "truth": 0.217,
+   "truth_dealbreakers": [
+    "no_kids",
+    "no_heavy_drinker"
+   ],
+   "judge": 0.176,
+   "ci": [
+    0.032,
+    0.32
+   ],
+   "per_scenario": [
+    0.57,
+    0.82,
+    0.11
+   ],
+   "clash": true,
+   "lsm": 0.824,
+   "self": 0.8,
+   "lsm_n": 0.7244655581947743,
+   "combined": 0.188
+  },
+  {
+   "pair": [
+    "p03",
+    "p17"
+   ],
+   "names": [
+    "Hannah",
+    "Ben"
+   ],
+   "truth": 0.186,
+   "truth_dealbreakers": [
+    "no_kids",
+    "wants_kids"
+   ],
+   "judge": 0.21,
+   "ci": [
+    0.088,
+    0.332
+   ],
+   "per_scenario": [
+    0.72,
+    0.82,
+    0.25
+   ],
+   "clash": true,
+   "lsm": 0.897,
+   "self": 0.8,
+   "lsm_n": 0.8978622327790975,
+   "combined": 0.226
+  },
+  {
+   "pair": [
+    "p04",
+    "p09"
+   ],
+   "names": [
+    "Lin",
+    "Daniel"
+   ],
+   "truth": 0.247,
+   "truth_dealbreakers": [
+    "same_faith"
+   ],
+   "judge": 0.817,
+   "ci": [
+    0.671,
+    0.962
+   ],
+   "per_scenario": [
+    0.68,
+    0.93,
+    0.85
+   ],
+   "clash": false,
+   "lsm": 0.828,
+   "self": 0.8,
+   "lsm_n": 0.7339667458432304,
+   "combined": 0.805
+  },
+  {
+   "pair": [
+    "p04",
+    "p10"
+   ],
+   "names": [
+    "Lin",
+    "Kevin"
+   ],
+   "truth": 0.71,
+   "truth_dealbreakers": [],
+   "judge": 0.747,
+   "ci": [
+    0.621,
+    0.873
+   ],
+   "per_scenario": [
+    0.68,
+    0.88,
+    0.69
+   ],
+   "clash": false,
+   "lsm": 0.789,
+   "self": 0.75,
+   "lsm_n": 0.641330166270784,
+   "combined": 0.731
+  },
+  {
+   "pair": [
+    "p04",
+    "p11"
+   ],
+   "names": [
+    "Lin",
+    "Marcus"
+   ],
+   "truth": 0.201,
+   "truth_dealbreakers": [
+    "no_kids",
+    "wants_kids"
+   ],
+   "judge": 0.194,
+   "ci": [
+    0.037,
+    0.352
+   ],
+   "per_scenario": [
+    0.72,
+    0.84,
+    0.1
+   ],
+   "clash": true,
+   "lsm": 0.834,
+   "self": 0.8,
+   "lsm_n": 0.7482185273159145,
+   "combined": 0.204
+  },
+  {
+   "pair": [
+    "p04",
+    "p12"
+   ],
+   "names": [
+    "Lin",
+    "Leo"
+   ],
+   "truth": 0.205,
+   "truth_dealbreakers": [
+    "no_kids"
+   ],
+   "judge": 0.207,
+   "ci": [
+    0.123,
+    0.291
+   ],
+   "per_scenario": [
+    0.68,
+    0.75,
+    0.35
+   ],
+   "clash": true,
+   "lsm": 0.822,
+   "self": 0.8,
+   "lsm_n": 0.7197149643705463,
+   "combined": 0.214
+  },
+  {
+   "pair": [
+    "p04",
+    "p13"
+   ],
+   "names": [
+    "Lin",
+    "Sam"
+   ],
+   "truth": 0.208,
+   "truth_dealbreakers": [
+    "no_kids",
+    "wants_kids"
+   ],
+   "judge": 0.175,
+   "ci": [
+    0.01,
+    0.34
+   ],
+   "per_scenario": [
+    0.57,
+    0.88,
+    0.05
+   ],
+   "clash": true,
+   "lsm": 0.747,
+   "self": 0.8,
+   "lsm_n": 0.5415676959619953,
+   "combined": 0.177
+  },
+  {
+   "pair": [
+    "p04",
+    "p14"
+   ],
+   "names": [
+    "Lin",
+    "Arjun"
+   ],
+   "truth": 0.75,
+   "truth_dealbreakers": [],
+   "judge": 0.753,
+   "ci": [
+    0.612,
+    0.895
+   ],
+   "per_scenario": [
+    0.62,
+    0.88,
+    0.76
+   ],
+   "clash": false,
+   "lsm": 0.829,
+   "self": 0.8,
+   "lsm_n": 0.7363420427553444,
+   "combined": 0.751
+  },
+  {
+   "pair": [
+    "p04",
+    "p15"
+   ],
+   "names": [
+    "Lin",
+    "Ethan"
+   ],
+   "truth": 0.203,
+   "truth_dealbreakers": [
+    "no_kids",
+    "wants_kids"
+   ],
+   "judge": 0.178,
+   "ci": [
+    0.037,
+    0.318
+   ],
+   "per_scenario": [
+    0.57,
+    0.82,
+    0.12
+   ],
+   "clash": true,
+   "lsm": 0.904,
+   "self": 0.75,
+   "lsm_n": 0.9144893111638956,
+   "combined": 0.199
+  },
+  {
+   "pair": [
+    "p04",
+    "p16"
+   ],
+   "names": [
+    "Lin",
+    "Tomás"
+   ],
+   "truth": 0.192,
+   "truth_dealbreakers": [
+    "no_kids"
+   ],
+   "judge": 0.219,
+   "ci": [
+    0.102,
+    0.335
+   ],
+   "per_scenario": [
+    0.7,
+    0.88,
+    0.3
+   ],
+   "clash": true,
+   "lsm": 0.804,
+   "self": 0.8,
+   "lsm_n": 0.6769596199524942,
+   "combined": 0.222
+  },
+  {
+   "pair": [
+    "p04",
+    "p17"
+   ],
+   "names": [
+    "Lin",
+    "Ben"
+   ],
+   "truth": 0.198,
+   "truth_dealbreakers": [
+    "no_kids",
+    "wants_kids"
+   ],
+   "judge": 0.204,
+   "ci": [
+    0.067,
+    0.341
+   ],
+   "per_scenario": [
+    0.68,
+    0.88,
+    0.2
+   ],
+   "clash": true,
+   "lsm": 0.84,
+   "self": 0.8,
+   "lsm_n": 0.7624703087885986,
+   "combined": 0.213
+  },
+  {
+   "pair": [
+    "p05",
+    "p09"
+   ],
+   "names": [
+    "Chloe",
+    "Daniel"
+   ],
+   "truth": 0.156,
+   "truth_dealbreakers": [
+    "no_kids",
+    "same_faith"
+   ],
+   "judge": 0.207,
+   "ci": [
+    0.08,
+    0.334
+   ],
+   "per_scenario": [
+    0.72,
+    0.82,
+    0.23
+   ],
+   "clash": true,
+   "lsm": 0.851,
+   "self": 0.75,
+   "lsm_n": 0.7885985748218528,
+   "combined": 0.217
+  },
+  {
+   "pair": [
+    "p05",
+    "p10"
+   ],
+   "names": [
+    "Chloe",
+    "Kevin"
+   ],
+   "truth": 0.189,
+   "truth_dealbreakers": [
+    "same_faith"
+   ],
+   "judge": 0.198,
+   "ci": [
+    0.112,
+    0.285
+   ],
+   "per_scenario": [
+    0.62,
+    0.75,
+    0.33
+   ],
+   "clash": true,
+   "lsm": 0.823,
+   "self": 0.7,
+   "lsm_n": 0.7220902612826603,
+   "combined": 0.206
+  },
+  {
+   "pair": [
+    "p05",
+    "p11"
+   ],
+   "names": [
+    "Chloe",
+    "Marcus"
+   ],
+   "truth": 0.768,
+   "truth_dealbreakers": [],
+   "judge": 0.742,
+   "ci": [
+    0.624,
+    0.859
+   ],
+   "per_scenario": [
+    0.62,
+    0.82,
+    0.77
+   ],
+   "clash": false,
+   "lsm": 0.737,
+   "self": 0.8,
+   "lsm_n": 0.5178147268408552,
+   "combined": 0.708
+  },
+  {
+   "pair": [
+    "p05",
+    "p12"
+   ],
+   "names": [
+    "Chloe",
+    "Leo"
+   ],
+   "truth": 0.644,
+   "truth_dealbreakers": [],
+   "judge": 0.625,
+   "ci": [
+    0.411,
+    0.839
+   ],
+   "per_scenario": [
+    0.65,
+    0.8,
+    0.43
+   ],
+   "clash": false,
+   "lsm": 0.711,
+   "self": 0.8,
+   "lsm_n": 0.4560570071258907,
+   "combined": 0.6
+  },
+  {
+   "pair": [
+    "p05",
+    "p13"
+   ],
+   "names": [
+    "Chloe",
+    "Sam"
+   ],
+   "truth": 0.629,
+   "truth_dealbreakers": [],
+   "judge": 0.625,
+   "ci": [
+    0.429,
+    0.821
+   ],
+   "per_scenario": [
+    0.53,
+    0.82,
+    0.53
+   ],
+   "clash": false,
+   "lsm": 0.773,
+   "self": 0.8,
+   "lsm_n": 0.6033254156769597,
+   "combined": 0.622
+  },
+  {
+   "pair": [
+    "p05",
+    "p14"
+   ],
+   "names": [
+    "Chloe",
+    "Arjun"
+   ],
+   "truth": 0.629,
+   "truth_dealbreakers": [],
+   "judge": 0.184,
+   "ci": [
+    0.036,
+    0.332
+   ],
+   "per_scenario": [
+    0.68,
+    0.8,
+    0.1
+   ],
+   "clash": true,
+   "lsm": 0.828,
+   "self": 0.8,
+   "lsm_n": 0.7339667458432304,
+   "combined": 0.195
+  },
+  {
+   "pair": [
+    "p05",
+    "p15"
+   ],
+   "names": [
+    "Chloe",
+    "Ethan"
+   ],
+   "truth": 0.635,
+   "truth_dealbreakers": [],
+   "judge": 0.617,
+   "ci": [
+    0.483,
+    0.75
+   ],
+   "per_scenario": [
+    0.57,
+    0.75,
+    0.53
+   ],
+   "clash": false,
+   "lsm": 0.663,
+   "self": 0.8,
+   "lsm_n": 0.34204275534441814,
+   "combined": 0.576
+  },
+  {
+   "pair": [
+    "p05",
+    "p16"
+   ],
+   "names": [
+    "Chloe",
+    "Tomás"
+   ],
+   "truth": 0.781,
+   "truth_dealbreakers": [],
+   "judge": 0.658,
+   "ci": [
+    0.572,
+    0.745
+   ],
+   "per_scenario": [
+    0.57,
+    0.72,
+    0.68
+   ],
+   "clash": false,
+   "lsm": 0.858,
+   "self": 0.8,
+   "lsm_n": 0.8052256532066508,
+   "combined": 0.68
+  },
+  {
+   "pair": [
+    "p05",
+    "p17"
+   ],
+   "names": [
+    "Chloe",
+    "Ben"
+   ],
+   "truth": 0.562,
+   "truth_dealbreakers": [],
+   "judge": 0.742,
+   "ci": [
+    0.655,
+    0.828
+   ],
+   "per_scenario": [
+    0.72,
+    0.82,
+    0.68
+   ],
+   "clash": false,
+   "lsm": 0.852,
+   "self": 0.75,
+   "lsm_n": 0.7909738717339668,
+   "combined": 0.749
+  },
+  {
+   "pair": [
+    "p06",
+    "p09"
+   ],
+   "names": [
+    "Aisha",
+    "Daniel"
+   ],
+   "truth": 0.186,
+   "truth_dealbreakers": [
+    "no_kids",
+    "same_faith"
+   ],
+   "judge": 0.207,
+   "ci": [
+    0.085,
+    0.329
+   ],
+   "per_scenario": [
+    0.68,
+    0.85,
+    0.25
+   ],
+   "clash": true,
+   "lsm": 0.742,
+   "self": 0.8,
+   "lsm_n": 0.5296912114014252,
+   "combined": 0.204
+  },
+  {
+   "pair": [
+    "p06",
+    "p10"
+   ],
+   "names": [
+    "Aisha",
+    "Kevin"
+   ],
+   "truth": 0.214,
+   "truth_dealbreakers": [
+    "same_faith"
+   ],
+   "judge": 0.207,
+   "ci": [
+    0.08,
+    0.334
+   ],
+   "per_scenario": [
+    0.72,
+    0.82,
+    0.22
+   ],
+   "clash": true,
+   "lsm": 0.817,
+   "self": 0.8,
+   "lsm_n": 0.7078384798099762,
+   "combined": 0.213
+  },
+  {
+   "pair": [
+    "p06",
+    "p11"
+   ],
+   "names": [
+    "Aisha",
+    "Marcus"
+   ],
+   "truth": 0.807,
+   "truth_dealbreakers": [],
+   "judge": 0.725,
+   "ci": [
+    0.478,
+    0.972
+   ],
+   "per_scenario": [
+    0.47,
+    0.88,
+    0.82
+   ],
+   "clash": false,
+   "lsm": 0.851,
+   "self": 0.8,
+   "lsm_n": 0.7885985748218528,
+   "combined": 0.735
+  },
+  {
+   "pair": [
+    "p06",
+    "p12"
+   ],
+   "names": [
+    "Aisha",
+    "Leo"
+   ],
+   "truth": 0.749,
+   "truth_dealbreakers": [],
+   "judge": 0.708,
+   "ci": [
+    0.617,
+    0.799
+   ],
+   "per_scenario": [
+    0.65,
+    0.8,
+    0.68
+   ],
+   "clash": false,
+   "lsm": 0.772,
+   "self": 0.8,
+   "lsm_n": 0.6009501187648457,
+   "combined": 0.692
+  },
+  {
+   "pair": [
+    "p06",
+    "p13"
+   ],
+   "names": [
+    "Aisha",
+    "Sam"
+   ],
+   "truth": 0.746,
+   "truth_dealbreakers": [],
+   "judge": 0.737,
+   "ci": [
+    0.601,
+    0.872
+   ],
+   "per_scenario": [
+    0.68,
+    0.88,
+    0.66
+   ],
+   "clash": false,
+   "lsm": 0.829,
+   "self": 0.8,
+   "lsm_n": 0.7363420427553444,
+   "combined": 0.737
+  },
+  {
+   "pair": [
+    "p06",
+    "p14"
+   ],
+   "names": [
+    "Aisha",
+    "Arjun"
+   ],
+   "truth": 0.845,
+   "truth_dealbreakers": [],
+   "judge": 0.233,
+   "ci": [
+    0.13,
+    0.336
+   ],
+   "per_scenario": [
+    0.75,
+    0.88,
+    0.38
+   ],
+   "clash": true,
+   "lsm": 0.857,
+   "self": 0.9,
+   "lsm_n": 0.8028503562945368,
+   "combined": 0.24
+  },
+  {
+   "pair": [
+    "p06",
+    "p15"
+   ],
+   "names": [
+    "Aisha",
+    "Ethan"
+   ],
+   "truth": 0.798,
+   "truth_dealbreakers": [],
+   "judge": 0.201,
+   "ci": [
+    0.111,
+    0.292
+   ],
+   "per_scenario": [
+    0.38,
+    0.82,
+    0.53
+   ],
+   "clash": true,
+   "lsm": 0.813,
+   "self": 0.8,
+   "lsm_n": 0.6983372921615202,
+   "combined": 0.208
+  },
+  {
+   "pair": [
+    "p06",
+    "p16"
+   ],
+   "names": [
+    "Aisha",
+    "Tomás"
+   ],
+   "truth": 0.754,
+   "truth_dealbreakers": [],
+   "judge": 0.733,
+   "ci": [
+    0.563,
+    0.904
+   ],
+   "per_scenario": [
+    0.57,
+    0.88,
+    0.75
+   ],
+   "clash": false,
+   "lsm": 0.94,
+   "self": 0.8,
+   "lsm_n": 1.0,
+   "combined": 0.773
+  },
+  {
+   "pair": [
+    "p06",
+    "p17"
+   ],
+   "names": [
+    "Aisha",
+    "Ben"
+   ],
+   "truth": 0.712,
+   "truth_dealbreakers": [],
+   "judge": 0.708,
+   "ci": [
+    0.473,
+    0.944
+   ],
+   "per_scenario": [
+    0.47,
+    0.88,
+    0.77
+   ],
+   "clash": false,
+   "lsm": 0.874,
+   "self": 0.75,
+   "lsm_n": 0.8432304038004752,
+   "combined": 0.728
+  },
+  {
+   "pair": [
+    "p07",
+    "p09"
+   ],
+   "names": [
+    "Grace",
+    "Daniel"
+   ],
+   "truth": 0.172,
+   "truth_dealbreakers": [
+    "wants_kids",
+    "no_kids",
+    "same_faith"
+   ],
+   "judge": 0.175,
+   "ci": [
+    0.021,
+    0.329
+   ],
+   "per_scenario": [
+    0.53,
+    0.88,
+    0.1
+   ],
+   "clash": true,
+   "lsm": 0.862,
+   "self": 0.8,
+   "lsm_n": 0.8147268408551069,
+   "combined": 0.192
+  },
+  {
+   "pair": [
+    "p07",
+    "p10"
+   ],
+   "names": [
+    "Grace",
+    "Kevin"
+   ],
+   "truth": 0.16,
+   "truth_dealbreakers": [
+    "same_faith"
+   ],
+   "judge": 0.169,
+   "ci": [
+    0.041,
+    0.297
+   ],
+   "per_scenario": [
+    0.57,
+    0.75,
+    0.12
+   ],
+   "clash": true,
+   "lsm": 0.668,
+   "self": 0.8,
+   "lsm_n": 0.35391923990498825,
+   "combined": 0.162
+  },
+  {
+   "pair": [
+    "p07",
+    "p11"
+   ],
+   "names": [
+    "Grace",
+    "Marcus"
+   ],
+   "truth": 0.794,
+   "truth_dealbreakers": [],
+   "judge": 0.675,
+   "ci": [
+    0.426,
+    0.924
+   ],
+   "per_scenario": [
+    0.43,
+    0.84,
+    0.76
+   ],
+   "clash": false,
+   "lsm": 0.795,
+   "self": 0.7,
+   "lsm_n": 0.6555819477434681,
+   "combined": 0.672
+  },
+  {
+   "pair": [
+    "p07",
+    "p12"
+   ],
+   "names": [
+    "Grace",
+    "Leo"
+   ],
+   "truth": 0.645,
+   "truth_dealbreakers": [],
+   "judge": 0.225,
+   "ci": [
+    0.161,
+    0.288
+   ],
+   "per_scenario": [
+    0.53,
+    0.82,
+    0.57
+   ],
+   "clash": true,
+   "lsm": 0.758,
+   "self": 0.75,
+   "lsm_n": 0.5676959619952495,
+   "combined": 0.221
+  },
+  {
+   "pair": [
+    "p07",
+    "p13"
+   ],
+   "names": [
+    "Grace",
+    "Sam"
+   ],
+   "truth": 0.198,
+   "truth_dealbreakers": [
+    "stay_sf"
+   ],
+   "judge": 0.178,
+   "ci": [
+    0.029,
+    0.327
+   ],
+   "per_scenario": [
+    0.53,
+    0.88,
+    0.12
+   ],
+   "clash": true,
+   "lsm": 0.731,
+   "self": 0.75,
+   "lsm_n": 0.503562945368171,
+   "combined": 0.178
+  },
+  {
+   "pair": [
+    "p07",
+    "p14"
+   ],
+   "names": [
+    "Grace",
+    "Arjun"
+   ],
+   "truth": 0.188,
+   "truth_dealbreakers": [
+    "wants_kids"
+   ],
+   "judge": 0.192,
+   "ci": [
+    0.078,
+    0.307
+   ],
+   "per_scenario": [
+    0.57,
+    0.82,
+    0.25
+   ],
+   "clash": true,
+   "lsm": 0.836,
+   "self": 0.8,
+   "lsm_n": 0.7529691211401425,
+   "combined": 0.203
+  },
+  {
+   "pair": [
+    "p07",
+    "p15"
+   ],
+   "names": [
+    "Grace",
+    "Ethan"
+   ],
+   "truth": 0.17,
+   "truth_dealbreakers": [
+    "stay_sf",
+    "no_smoker"
+   ],
+   "judge": 0.187,
+   "ci": [
+    0.042,
+    0.331
+   ],
+   "per_scenario": [
+    0.57,
+    0.88,
+    0.15
+   ],
+   "clash": true,
+   "lsm": 0.716,
+   "self": 0.8,
+   "lsm_n": 0.46793349168646076,
+   "combined": 0.184
+  },
+  {
+   "pair": [
+    "p07",
+    "p16"
+   ],
+   "names": [
+    "Grace",
+    "Tomás"
+   ],
+   "truth": 0.761,
+   "truth_dealbreakers": [],
+   "judge": 0.675,
+   "ci": [
+    0.562,
+    0.788
+   ],
+   "per_scenario": [
+    0.57,
+    0.77,
+    0.68
+   ],
+   "clash": false,
+   "lsm": 0.725,
+   "self": 0.7,
+   "lsm_n": 0.4893111638954869,
+   "combined": 0.647
+  },
+  {
+   "pair": [
+    "p07",
+    "p17"
+   ],
+   "names": [
+    "Grace",
+    "Ben"
+   ],
+   "truth": 0.647,
+   "truth_dealbreakers": [],
+   "judge": 0.667,
+   "ci": [
+    0.567,
+    0.766
+   ],
+   "per_scenario": [
+    0.57,
+    0.75,
+    0.68
+   ],
+   "clash": false,
+   "lsm": 0.691,
+   "self": 0.8,
+   "lsm_n": 0.40855106888361037,
+   "combined": 0.628
+  },
+  {
+   "pair": [
+    "p08",
+    "p09"
+   ],
+   "names": [
+    "Elena",
+    "Daniel"
+   ],
+   "truth": 0.162,
+   "truth_dealbreakers": [
+    "no_kids",
+    "same_faith"
+   ],
+   "judge": 0.172,
+   "ci": [
+    0.02,
+    0.324
+   ],
+   "per_scenario": [
+    0.68,
+    0.75,
+    0.05
+   ],
+   "clash": true,
+   "lsm": 0.81,
+   "self": 0.8,
+   "lsm_n": 0.6912114014251783,
+   "combined": 0.182
+  },
+  {
+   "pair": [
+    "p08",
+    "p10"
+   ],
+   "names": [
+    "Elena",
+    "Kevin"
+   ],
+   "truth": 0.162,
+   "truth_dealbreakers": [
+    "same_faith"
+   ],
+   "judge": 0.152,
+   "ci": [
+    -0.002,
+    0.305
+   ],
+   "per_scenario": [
+    0.43,
+    0.82,
+    0.05
+   ],
+   "clash": true,
+   "lsm": 0.788,
+   "self": 0.7,
+   "lsm_n": 0.63895486935867,
+   "combined": 0.163
+  },
+  {
+   "pair": [
+    "p08",
+    "p11"
+   ],
+   "names": [
+    "Elena",
+    "Marcus"
+   ],
+   "truth": 0.848,
+   "truth_dealbreakers": [],
+   "judge": 0.658,
+   "ci": [
+    0.423,
+    0.894
+   ],
+   "per_scenario": [
+    0.42,
+    0.82,
+    0.72
+   ],
+   "clash": false,
+   "lsm": 0.719,
+   "self": 0.8,
+   "lsm_n": 0.4750593824228028,
+   "combined": 0.631
+  },
+  {
+   "pair": [
+    "p08",
+    "p12"
+   ],
+   "names": [
+    "Elena",
+    "Leo"
+   ],
+   "truth": 0.605,
+   "truth_dealbreakers": [],
+   "judge": 0.575,
+   "ci": [
+    0.389,
+    0.761
+   ],
+   "per_scenario": [
+    0.42,
+    0.75,
+    0.55
+   ],
+   "clash": false,
+   "lsm": 0.718,
+   "self": 0.7,
+   "lsm_n": 0.4726840855106888,
+   "combined": 0.56
+  },
+  {
+   "pair": [
+    "p08",
+    "p13"
+   ],
+   "names": [
+    "Elena",
+    "Sam"
+   ],
+   "truth": 0.201,
+   "truth_dealbreakers": [
+    "stay_sf"
+   ],
+   "judge": 0.184,
+   "ci": [
+    0.073,
+    0.294
+   ],
+   "per_scenario": [
+    0.57,
+    0.77,
+    0.23
+   ],
+   "clash": true,
+   "lsm": 0.794,
+   "self": 0.75,
+   "lsm_n": 0.6532066508313541,
+   "combined": 0.191
+  },
+  {
+   "pair": [
+    "p08",
+    "p14"
+   ],
+   "names": [
+    "Elena",
+    "Arjun"
+   ],
+   "truth": 0.667,
+   "truth_dealbreakers": [],
+   "judge": 0.172,
+   "ci": [
+    0.051,
+    0.293
+   ],
+   "per_scenario": [
+    0.42,
+    0.82,
+    0.22
+   ],
+   "clash": true,
+   "lsm": 0.745,
+   "self": null,
+   "lsm_n": 0.5368171021377672,
+   "combined": 0.174
+  },
+  {
+   "pair": [
+    "p08",
+    "p15"
+   ],
+   "names": [
+    "Elena",
+    "Ethan"
+   ],
+   "truth": 0.195,
+   "truth_dealbreakers": [
+    "stay_sf"
+   ],
+   "judge": 0.197,
+   "ci": [
+    0.072,
+    0.321
+   ],
+   "per_scenario": [
+    0.71,
+    0.77,
+    0.2
+   ],
+   "clash": true,
+   "lsm": 0.682,
+   "self": 0.8,
+   "lsm_n": 0.38717339667458445,
+   "combined": 0.188
+  },
+  {
+   "pair": [
+    "p08",
+    "p16"
+   ],
+   "names": [
+    "Elena",
+    "Tomás"
+   ],
+   "truth": 0.804,
+   "truth_dealbreakers": [],
+   "judge": 0.742,
+   "ci": [
+    0.655,
+    0.828
+   ],
+   "per_scenario": [
+    0.72,
+    0.82,
+    0.68
+   ],
+   "clash": false,
+   "lsm": 0.74,
+   "self": 0.85,
+   "lsm_n": 0.5249406175771971,
+   "combined": 0.709
+  },
+  {
+   "pair": [
+    "p08",
+    "p17"
+   ],
+   "names": [
+    "Elena",
+    "Ben"
+   ],
+   "truth": 0.566,
+   "truth_dealbreakers": [],
+   "judge": 0.742,
+   "ci": [
+    0.624,
+    0.859
+   ],
+   "per_scenario": [
+    0.62,
+    0.82,
+    0.77
+   ],
+   "clash": false,
+   "lsm": 0.793,
+   "self": 0.8,
+   "lsm_n": 0.6508313539192401,
+   "combined": 0.728
+  },
+  {
+   "pair": [
+    "p18",
+    "p19"
+   ],
+   "names": [
+    "Jess",
+    "Nora"
+   ],
+   "truth": 0.751,
+   "truth_dealbreakers": [],
+   "judge": 0.783,
+   "ci": [
+    0.676,
+    0.89
+   ],
+   "per_scenario": [
+    0.68,
+    0.82,
+    0.85
+   ],
+   "clash": false,
+   "lsm": 0.909,
+   "self": 0.8,
+   "lsm_n": 0.9263657957244658,
+   "combined": 0.805
+  }
+ ]
+}

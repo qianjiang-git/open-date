@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vexo Signal</title>
+<style>
+  body{margin:0;font:17px system-ui;background:#111;color:#fff}
+  main{padding:4vh 16px;max-width:520px;margin:auto}
+  input{width:100%;box-sizing:border-box;padding:14px;font-size:20px;border-radius:12px;border:0;margin:8px 0}
+  button{font-size:18px;font-weight:700;border:0;border-radius:12px;color:#fff;padding:12px 16px}
+  .go{width:100%;background:#4466ff}
+  .row{display:flex;align-items:center;gap:8px;background:#1d1d1d;border-radius:14px;padding:10px 12px;margin:8px 0}
+  .row .n{flex:1}.dot{width:10px;height:10px;border-radius:50%;background:#666}.on{background:#1db954}
+  .a{background:#1db954}.r{background:#e5384a}
+  #inbox{margin:14px 0;padding:18px;border-radius:14px;text-align:center;font-size:22px;background:#1d1d1d}
+  .muted{color:#999;font-size:14px}
+</style>
+</head>
+<body>
+<main>
+  <h1>Vexo Signal</h1>
+  <div id="join">
+    <div class="muted">Pick a name to join the server.</div>
+    <input id="name" placeholder="Your name" maxlength="24" autocomplete="off">
+    <button class="go" id="go">Join</button>
+  </div>
+  <div id="live" hidden>
+    <div class="muted">You are <b id="me"></b>. Keep this tab open.</div>
+    <div class="muted">Client ID: <code id="myid"></code> · online while this page checks in</div>
+    <div id="inbox">No answers yet</div>
+    <div class="muted">Everyone on the server</div>
+    <div id="list"></div>
+  </div>
+  <div id="err" class="muted"></div>
+</main>
+<script>
+(() => {
+  const $ = (i) => document.getElementById(i);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  let me = null, token = null, seen = 0;
+  const store = (k, v) => { try { v === undefined ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (_) {} };
+  const load = (k) => { try { return localStorage.getItem(k); } catch (_) { return null; } };
+  const q = new URLSearchParams(location.search);
+
+  let timer = null;
+  async function join(name, fresh) {
+    const r = await fetch("/api/signal/join", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, token: fresh ? null : load("vs-token") }) });
+    const d = await r.json().catch(() => ({}));
+    if (r.status === 401 && !fresh) { store("vs-token"); return join(name, true); }   // stored token expired: join anew
+    if (!r.ok) { $("err").textContent = typeof d.detail === "string" ? d.detail : "Could not join"; return; }
+    me = d.name; token = d.token; store("vs-name", me); store("vs-token", token);
+    $("join").hidden = true; $("live").hidden = false; $("me").textContent = me; $("myid").textContent = d.id; $("err").textContent = "";
+    tick(); if (!timer) timer = setInterval(tick, 1500);
+  }
+  async function tick() {
+    try {
+      const auth = { Authorization: "Bearer " + token };
+      const sr = await fetch("/api/signal", { headers: auth });
+      if (sr.status === 401) { join(me, true); return; }          // server dropped us (idle >12 s or restart)
+      const sig = (await sr.json()).signal;
+      if (sig && sig.seq > seen) {
+        seen = sig.seq;
+        const ok = sig.answer === "accept";
+        $("inbox").textContent = `${sig.from} said ${ok ? "ACCEPT" : "REJECT"}`;
+        $("inbox").style.background = ok ? "#1db954" : "#e5384a";
+      }
+      const list = (await (await fetch("/api/signal/members")).json()).members;
+      $("list").innerHTML = list.map((m) => `<div class="row"><span class="dot ${m.online ? "on" : ""}"></span>
+        <span class="n">${esc(m.name)}${m.name === me ? " (you)" : ""}</span>
+        ${m.name === me ? "" : `<button class="a" data-to="${esc(m.name)}" data-a="accept">Accept</button>
+        <button class="r" data-to="${esc(m.name)}" data-a="reject">Reject</button>`}</div>`).join("");
+    } catch (e) { $("err").textContent = "Connection problem, retrying…"; }
+  }
+  $("list").addEventListener("click", async (e) => {
+    const b = e.target.closest("button[data-to]"); if (!b) return;
+    const r = await fetch("/api/signal", { method: "POST",
+      headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
+      body: JSON.stringify({ to: b.dataset.to, answer: b.dataset.a }) });
+    $("err").textContent = r.ok ? `Sent ${b.dataset.a} to ${b.dataset.to}` : "Failed: " + r.status;
+  });
+  document.addEventListener("visibilitychange", () => { if (!document.hidden && token) tick(); });   // phone tab woke up
+  $("go").onclick = () => { const n = $("name").value.trim(); if (n) join(n); };
+  $("name").addEventListener("keydown", (e) => { if (e.key === "Enter") $("go").click(); });
+  const start = q.get("name") || load("vs-name");
+  if (start) { $("name").value = start; join(start); }
+})();
+</script>
+</body>
+</html>
