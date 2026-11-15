@@ -49,6 +49,8 @@ struct OpenDateView: View {
     @AppStorage("openDate.encounterNote") private var encounterNote=""
     @AppStorage("openDate.encounterReflection") private var encounterReflection=""
     @State private var working=false
+    @State private var learnedTick=0
+    @State private var hardNos=SecondYouTraining.load().hardNos
     @State private var distance = 0.35
     @State private var liveProfile: DateProfile = {
         if let data = UserDefaults.standard.data(forKey:"openDate.profile"), let saved = try? JSONDecoder().decode(DateProfile.self,from:data) { return saved }
@@ -169,7 +171,8 @@ struct OpenDateView: View {
         let total = max(1, max(profile.interests.count, p.interests.count))
         let interestRatio = Double(shared.count) / Double(total)
         // Preview index for recommended profiles, derived only from declared preferences.
-        let chemistry = Int((52 + 30 * interestRatio + (sameGoal ? 18 : 0)).rounded())
+        let measured = demo ? nil : exchanges[p.id]
+        let chemistry = measured?.score.map { Int(($0 * 100).rounded()) } ?? Int((52 + 30 * interestRatio + (sameGoal ? 18 : 0)).rounded())
         let alreadyMatched = saved.contains { $0.id == p.id }
         let pink = Color(red: 1, green: 0.58, blue: 0.81)
         let surface = Color(red: 0.19, green: 0.14, blue: 0.23)
@@ -183,6 +186,9 @@ struct OpenDateView: View {
                 }
                 VStack(alignment: .leading, spacing: 16) {
                     Text("\(chemistry)% chemistry").font(.system(size: 38, weight: .semibold, design: .serif))
+                    if let m = measured, let lo = m.low, let hi = m.high {
+                        Text("From your agents' chat on this phone: likely \(Int(lo * 100))% to \(Int(hi * 100))%").font(.caption).foregroundStyle(pink)
+                    }
                     HStack(spacing: 14) {
                         MyAvatar().scaleEffect(1.9).frame(width: 78, height: 78)
                             .overlay(Circle().strokeBorder(pink, lineWidth: 2))
@@ -328,6 +334,11 @@ struct OpenDateView: View {
                     VStack(alignment: .leading) {
                         Text("Match with " + person.name).font(.title2.bold())
                         Text(exchange == nil ? "Your agents are talking…" : exchange?.onDevice == true ? "On-device agent conversation" : "Profile-based demo conversation").font(.caption)
+                        if let e = exchange, let score = e.score {
+                            Text("Chemistry \(Int((score * 100).rounded()))%" + (e.low.map { " · likely \(Int($0 * 100))% to \(Int((e.high ?? $0) * 100))%" } ?? "")).font(.caption.bold()).foregroundStyle(pink)
+                            if e.clash == true { Text("A hard no came up, so Second You held back").font(.caption) }
+                            if !(e.invented ?? []).isEmpty { Text("Your agent said something your profile doesn't back up. Worth a look.").font(.caption) }
+                        }
                     }
                 }
                 ForEach(AgentExchange.topics.indices, id: \.self) { topic in
@@ -375,6 +386,7 @@ struct OpenDateView: View {
                         Button(working ? "Building portrait…" : "Build my portrait") {
                             working = true
                             Task {
+                                if !demo { SecondYouTraining.learn(input.wrappedValue); learnedTick += 1 }
                                 portrait.wrappedValue = await PersonalInsights.reflect(text: input.wrappedValue, profile: profile, afterMeeting: false)
                                 working = false
                             }
@@ -394,6 +406,23 @@ struct OpenDateView: View {
                             .font(.body)
                     }.padding(.vertical, 4)
                 } header: { Text("My Ideal Date").font(.title2.bold()).textCase(nil).foregroundStyle(plum) }
+                Section {
+                    let t = learnedTick >= 0 ? SecondYouTraining.traits() : SecondYouTraining.Traits()
+                    if t.lines == 0 {
+                        Text("Write a few things in your own words above and tap Build my portrait. Second You learns from them right here on your phone.").font(.subheadline)
+                    } else {
+                        LabeledContent("Learned from", value: "\(t.lines) things you said")
+                        LabeledContent("Your style", value: "about \(t.avgWords) words, questions \(t.asksQuestions)% of the time")
+                        if !t.phrases.isEmpty { LabeledContent("You often say", value: t.phrases.joined(separator: " · ")) }
+                    }
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("My hard nos").font(.subheadline.bold())
+                        TextField("Things your agent should never compromise on", text: $hardNos, axis: .vertical)
+                            .onChange(of: hardNos) { _, v in SecondYouTraining.setHardNos(v) }
+                    }.padding(.vertical, 4)
+                    Text("Trained and stored only on this iPhone. Your notes and hard nos never get uploaded.").font(.caption).foregroundStyle(.secondary)
+                    Button("Forget what Second You learned", role: .destructive) { SecondYouTraining.wipe(); hardNos = ""; learnedTick += 1 }
+                } header: { Text("What Second You Learned").font(.title2.bold()).textCase(nil).foregroundStyle(plum) }
             }.navigationTitle("Second You")
                 .toolbar { Button("Edit profile") { editing = true } }
         }
