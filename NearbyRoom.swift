@@ -14,6 +14,7 @@ struct DateProfile: Codable, Identifiable, Equatable {
     var symbol: String
     static let cues = ["sparkles", "moon.stars.fill", "sun.max.fill", "leaf.fill"]
     static let choices = ["Design", "Music", "Outdoors", "Food", "Film", "Making things"]
+    static let kagen = DateProfile(id: UUID(uuidString: "F56D7367-943D-42F2-9205-27A8BA6F03FD")!, name: "Kagen", interests: ["Photography", "Live music"], lookingFor: "Someone to explore with", occupation: "Architect", education: "B.Arch. in Architecture", personality: "I shoot film on weekends. Pick a neighborhood and I’ll find us a coffee spot.", symbol: "camera")
     static let examples = [
         DateProfile(id: UUID(uuidString:"00000000-0000-4000-A000-000000000001")!, name: "Ari", interests: ["Design", "Music"], lookingFor: "A creative collaborator", occupation: "Graphic designer", education: "BFA in Graphic Design", personality: "I design gig posters and keep a running list of tiny music venues. Ask me about the show I went to last Friday.", symbol: "sparkles"),
         DateProfile(id: UUID(uuidString:"00000000-0000-4000-A000-000000000002")!, name: "Jules", interests: ["Outdoors", "Food"], lookingFor: "An adventure buddy", occupation: "Trail guide", education: "BS in Environmental Science", personality: "My ideal Saturday starts on a coastal trail and ends at a noodle shop neither of us has tried.", symbol: "leaf.fill"),

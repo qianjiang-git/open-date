@@ -74,7 +74,13 @@ struct OpenDateView: View {
     }
     private func common(_ p:DateProfile) -> [String] { profile.interests.filter(p.interests.contains) }
     private func score(_ p:DateProfile) -> Int { common(p).count * 2 + (profile.lookingFor == p.lookingFor ? 1 : 0) }
-    private var candidate: Encounter? { nearby.first { score($0.profile)>0 && $0.strength >= -72 && !alerted.contains($0.id) } }
+    @State private var scanID = UUID()
+    @State private var approvalMessage: String?
+    private var candidate: Encounter? {
+        if demo {
+            return alerted.contains(DateProfile.kagen.id) ? nil : Encounter(profile: DateProfile.kagen, strength: -60)
+        }
+        return nearby.first { score($0.profile)>0 && $0.strength >= -72 && !alerted.contains($0.id) } }
     private func match() {
         guard instant, open, banner == nil, selected == nil, let encounter=candidate else {return}
         banner=encounter.profile; alerted.insert(encounter.id)
@@ -88,7 +94,7 @@ struct OpenDateView: View {
     }
     private func leave() { likes=[]; open=false; instant=false; banner=nil; selected=nil; dismissed=[]; alerted=[]; room.stop() }
     private func find(_ p:DateProfile) { banner=nil; distance=0.35; selected=p }
-    private func skip(_ p:DateProfile) { vexo.send(.reject, to: p.name); dismissed.insert(p.id); banner=nil; selected=nil }
+    private func skip(_ p:DateProfile) { vexo.send(.reject, to: p.id == DateProfile.kagen.id ? VexoSignal.braceletOwner : p.name); dismissed.insert(p.id); banner=nil; selected=nil }
     private func remember(_ p:DateProfile) {
         guard !saved.contains(where:{$0.id==p.id}) else { return }
         if demo { demoSaved.append(p); return }
@@ -433,27 +439,54 @@ struct OpenDateView: View {
                     Toggle("Instant matching", isOn: $instant)
                         .font(.headline).tint(rose)
                         .onChange(of: instant) { _, enabled in
+                            scanID = UUID()
                             banner = nil
                             analyzing = false
                             finishedScan = false
-                            if enabled { alerted.removeAll() }
+                            if enabled { alerted.removeAll(); approvalMessage = nil }
                         }
                     if instant {
                         if let person = banner {
                             VStack(alignment: .leading, spacing: 12) {
-                                Text("Suggested for you").font(.caption.bold()).foregroundStyle(rose)
+                                HStack {
+                                    Text("Suggested for you").font(.caption.bold()).foregroundStyle(rose)
+                                    Spacer()
+                                    if person.id == DateProfile.kagen.id {
+                                        Text("5 m").font(.subheadline.weight(.semibold)).foregroundStyle(.secondary)
+                                            .accessibilityLabel("Demo distance, 5 meters")
+                                    }
+                                }
                                 HStack {
                                     ProfilePortrait(person: person, size: 58)
                                     Text(person.name).font(.title2.bold())
                                 }
                                 profileFacts(person)
                                 Text(person.interests.joined(separator: " · ")).font(.subheadline)
+                                if person.id == DateProfile.kagen.id, let bio = person.personality {
+                                    Text(bio).font(.subheadline)
+                                }
                                 HStack {
-                                    Button("View profile") { detail = person }.buttonStyle(.borderedProminent)
+                                    if person.id != DateProfile.kagen.id {
+                                        Button("View profile") { detail = person }.buttonStyle(.borderedProminent)
+                                    }
                                     Button("Pass") { finishedScan = false; analyzing = false; skip(person) }
+                                        .disabled(person.id == DateProfile.kagen.id && approvalMessage == "Sending green signal…")
+                                }
+                                if person.id == DateProfile.kagen.id, let delivery = approvalMessage {
+                                    Text(delivery).font(.footnote).foregroundStyle(.secondary)
                                 }
                             }.padding().frame(maxWidth: .infinity, alignment: .leading)
                                 .background(.white, in: RoundedRectangle(cornerRadius: 18))
+                                .onAppear {
+                                    guard person.id == DateProfile.kagen.id, approvalMessage == nil else { return }
+                                    approvalMessage = "Sending green signal…"
+                                    let currentScan = scanID
+                                    Task {
+                                        guard currentScan == scanID, instant, open else { return }
+                                        let message = await vexo.approveBracelet()
+                                        if currentScan == scanID { approvalMessage = message }
+                                    }
+                                }
                         } else {
                             Group {
                                 if finishedScan {
@@ -514,7 +547,7 @@ struct OpenDateView: View {
             }.padding(20)
         }.background(Color(red:0.98,green:0.96,blue:0.94)).foregroundStyle(plum).tint(rose)
         .onChange(of: nearby.map(\.id)) { _, ids in
-            if let current = banner, !ids.contains(current.id) { banner = nil }
+            if let current = banner, current.id != DateProfile.kagen.id, !ids.contains(current.id) { banner = nil }
         }
 
 
@@ -729,7 +762,7 @@ private struct ProfilePortrait: View {
 
     var body: some View {
         let index = DemoCrowd.indices[person.id]
-        let resource = index.map { $0 < 3 ? DateProfile.examples[$0].name.lowercased() : "guest" + String($0 - 3) } ?? (person.id == DemoBuilding.noor.id ? "noor" : "")
+        let resource = person.id == DateProfile.kagen.id ? "kgen" : index.map { $0 < 3 ? DateProfile.examples[$0].name.lowercased() : "guest" + String($0 - 3) } ?? (person.id == DemoBuilding.noor.id ? "noor" : "")
         Group {
             if !resource.isEmpty, let photo = UIImage(named: "Portraits/" + resource + ".jpg") {
                 Image(uiImage: photo).resizable().scaledToFill()

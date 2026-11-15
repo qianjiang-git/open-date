@@ -28,6 +28,28 @@ final class VexoSignal: ObservableObject {
         delivery = "Waiting to send"
     }
 
+    func approveBracelet() async -> String {
+        let message: String
+        do {
+            guard token != nil else { return "Connecting to Vexo. Run Instant matching again in a moment." }
+            let roster = try JSONDecoder().decode(Roster.self, from: await request("/api/signal/members"))
+            guard roster.members.contains(where: { $0.online != false && $0.name.caseInsensitiveCompare(Self.braceletOwner) == .orderedSame }) else {
+                let offline = "Kagen’s receiver is offline. Connect it as kgen, then run Instant matching again."
+                delivery = offline
+                return offline
+            }
+            _ = try await request("/api/signal", body: ["to": Self.braceletOwner, "answer": Answer.accept.rawValue])
+            message = "Green signal sent to Kagen’s bracelet receiver."
+        } catch Failure.http(401) {
+            token = nil
+            message = "Reconnecting to Vexo. Run Instant matching again in a moment."
+        } catch {
+            message = "Vexo couldn’t confirm delivery. Run Instant matching again to retry."
+        }
+        delivery = message
+        return message
+    }
+
     func connect(name: String) async {
         let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         let id = UUID()
