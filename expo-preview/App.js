@@ -1,3 +1,6 @@
+import {WebView} from 'react-native-webview';
+import drawBand from './bandPreview';
+const bandHTML={html:"<meta name='viewport' content='width=device-width,initial-scale=1'><body><script>("+drawBand.toString()+")()</script></body>"};
 import React,{useEffect,useState} from 'react';
 import {Linking,ActivityIndicator,AccessibilityInfo,Animated,Switch,View,Text,Image,Pressable,ScrollView,TextInput,Modal,SafeAreaView,StyleSheet} from 'react-native';
 import * as Location from 'expo-location';
@@ -39,13 +42,13 @@ function AgentChat({person,close}){
  const topic=person.interests.find(x=>['Music','Design'].includes(x))||person.interests[0];
  const plan=topic==='Music'?'browse a record shop and each pick a song':topic==='Design'?'visit a small exhibition and pick a favorite piece':'meet for coffee and trade local recommendations';
  const turns=[
-  ['First chat','What would be a good way for Elena to get to know '+person.name+'?',person.name+' lists '+person.interests.join(' and ')+'. I’d ask what got them interested in '+topic+'.'],
-  ['Future talk','Elena wants someone to explore with. What does '+person.name+' hope to find?',person.name+' chose “'+person.goal+'.” They could talk about what that looks like in everyday life.'],
+  ['First chat','What would be a good way for Qian to get to know '+person.name+'?',person.name+' lists '+person.interests.join(' and ')+'. I’d ask what got them interested in '+topic+'.'],
+  ['Future talk','Qian wants someone to explore with. What does '+person.name+' hope to find?',person.name+' chose “'+person.goal+'.” They could talk about what that looks like in everyday life.'],
   ['Plan a date','How about suggesting they '+plan+' together?','Let’s offer that idea and leave the time and place for them to choose.']
  ];
  return <SafeAreaView style={{flex:1,backgroundColor:'#19121f'}}><ScrollView contentContainerStyle={{padding:18,gap:12}}>
  <Pressable onPress={close}><Text style={{color:'#ffadd6'}}>‹ Matches</Text></Pressable><Avatar p={person}/><Text style={{color:'white',fontSize:24,fontWeight:'700'}}>Match with {person.name}</Text><Text style={{color:'#cbbfcf'}}>Profile-based demo conversation</Text>
- {turns.map(([topic,a,b])=><View key={topic} style={{gap:9}}><Text style={{color:'#ffa5d4'}}>{topic}</Text>{[a,b].map((line,i)=><View key={i} style={{alignSelf:i?'flex-start':'flex-end',maxWidth:'88%',padding:13,borderRadius:16,backgroundColor:i?'#352b3d':'#53324e'}}><Text style={{color:'#ffb3d8',fontWeight:'bold',marginBottom:5}}>{i?person.name:'Elena'}’s agent</Text><Text style={{color:'white'}}>{line}</Text></View>)}</View>)}
+ {turns.map(([topic,a,b])=><View key={topic} style={{gap:9}}><Text style={{color:'#ffa5d4'}}>{topic}</Text>{[a,b].map((line,i)=><View key={i} style={{alignSelf:i?'flex-start':'flex-end',maxWidth:'88%',padding:13,borderRadius:16,backgroundColor:i?'#352b3d':'#53324e'}}><Text style={{color:'#ffb3d8',fontWeight:'bold',marginBottom:5}}>{i?person.name:'Qian'}’s agent</Text><Text style={{color:'white'}}>{line}</Text></View>)}</View>)}
  </ScrollView></SafeAreaView>;
 }
 function Chemistry({person,matched,onHi,onClose}) {
@@ -62,8 +65,8 @@ function Chemistry({person,matched,onHi,onClose}) {
  <View style={panel}><Text style={[white,s.bold]}>Why you are matched</Text><Text style={white}>Shared interests · {shared.join(' & ')}</Text><Text style={white}>{aligned?'You’re both looking for: ':person.name+' is looking for: '}{person.goal}</Text><Text style={{color:'#c7bdce'}}>Chemistry is a preview score based on your listed interests and dating preferences.</Text></View></ScrollView></SafeAreaView>
 }
 function InstantMatch() {
- const [enabled,setEnabled]=useState(false),[stage,setStage]=useState('detect'),[delivery,setDelivery]=useState('');
- const session=React.useRef(null),sending=React.useRef(false),signaled=React.useRef(false);
+ const [enabled,setEnabled]=useState(false),[stage,setStage]=useState('detect'),[sending,setSending]=useState(false);
+ const session=React.useRef(null),signaled=React.useRef(false);
  useEffect(()=>{
    if(!enabled)return;
    const analyzing=setTimeout(()=>setStage('analyze'),2000);
@@ -73,43 +76,41 @@ function InstantMatch() {
  useEffect(()=>{
    if(enabled&&stage==='ready'&&!signaled.current){
      signaled.current=true;
-     signal('accept');
+     signal();
    }
  },[enabled,stage]);
- async function signal(answer){
-   if(sending.current)return;
-   sending.current=true;setDelivery('Sending…');
+ async function signal(){
+   setSending(true);
    const base='https://vexo-match.onrender.com/api/signal';
    try{
      for(let attempt=0;attempt<2;attempt++){
        if(!session.current){
-         const name='Elena-'+Math.random().toString(36).slice(2,8);
+         const name='Qian-'+Math.random().toString(36).slice(2,8);
          const join=await fetch(base+'/join',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name})});
          if(!join.ok)throw Error();
          session.current=(await join.json()).token;
        }
-       if(answer==='accept'){
+       {
          const roster=await fetch(base+'/members',{headers:{Authorization:'Bearer '+session.current},cache:'no-store'});
          if(roster.status===401){session.current=null;continue}
          if(!roster.ok)throw Error();
          if(!(await roster.json()).members.some(m=>m.online!==false&&m.name.toLowerCase()==='kgen')){
-           setDelivery('Kagen’s receiver is offline. Connect it as kgen, then run Instant matching again.');return;
+           return;
          }
        }
-       const response=await fetch(base,{method:'POST' ,headers:{'Content-Type':'application/json',Authorization:'Bearer '+session.current},body:JSON.stringify({to:'kgen',answer})});
+       const response=await fetch(base,{method:'POST' ,headers:{'Content-Type':'application/json',Authorization:'Bearer '+session.current},body:JSON.stringify({to:'kgen',answer:'accept'})});
        if(response.status===401){session.current=null;continue}
        if(!response.ok)throw Error();
-       setDelivery(answer==='accept'?'Green signal sent to Kagen’s bracelet receiver.':'Sent reject to kgen');if(answer==='reject')setStage('passed');return;
+       return;
      }
      throw Error();
-   }catch{setDelivery('Delivery unconfirmed for kgen')}finally{sending.current=false}
+   }catch(error){console.warn('Vexo signal unavailable',error)}finally{setSending(false)}
  }
- return <View style={{gap:10}}><View style={s.bar}><Text style={s.bold}>Instant matching</Text><Switch value={enabled} disabled={sending.current} onValueChange={v=>{signaled.current=false;setStage('detect');setDelivery('');setEnabled(v)}}/></View>
- {enabled&&(stage==='passed'?<Text>No suggested profiles nearby yet.</Text>:stage!=='ready'?<MatchActivity stage={stage}/>:<View style={{backgroundColor:'white',borderRadius:16,padding:16,gap:8}}>
+ return <View style={{gap:10}}><View style={s.bar}><Text style={s.bold}>Instant matching</Text><Switch value={enabled} disabled={sending} onValueChange={v=>{signaled.current=false;setStage('detect');setEnabled(v)}}/></View>
+ {enabled&&(stage!=='ready'?<MatchActivity stage={stage}/>:<View style={{backgroundColor:'white',borderRadius:16,padding:16,gap:8}}>
  <View style={s.bar}><Text>Suggested for you</Text><Text accessibilityLabel="Demo distance, 5 meters" style={s.bold}>5 m</Text></View><View style={s.row}><Avatar p={{photo:require('./assets/portraits/kgen.jpg')}} size={58}/><Text style={s.h}>Kagen</Text></View>
  <Text>Architect</Text><Text>B.Arch. in Architecture</Text><Text>Photography · Live music</Text><Text>I shoot film on weekends. Pick a neighborhood and I’ll find us a coffee spot.</Text>
- <View style={s.bar}>
- <Pressable disabled={delivery==='Sending…'} onPress={()=>signal('reject')}><Text style={s.action}>Pass</Text></Pressable></View>{!!delivery&&<Text>{delivery}</Text>}</View>)}</View>
+ </View>)}</View>
 }
 const compatibleIds=new Set(good.map(person=>person.id));
 const groups=Array.from({length:6},(_,i)=>people.filter(p=>p.id%6===i));
@@ -163,9 +164,12 @@ export default function App(){
  {tab==='Discover'?<><View style={s.bar}><Text style={s.h}>Around you</Text>{button(open?'Leave':'Enter',()=>O(!open))}</View>{open&&<>{fix&&anchor?<MapView style={s.map} showsUserLocation initialRegion={{latitude:fix.latitude,longitude:fix.longitude,latitudeDelta:.00055,longitudeDelta:.00055}}>{groups.map((g,i)=>{const first=g.find(p=>compatibleIds.has(p.id))||g[0];return <Marker key={i} coordinate={roomCoordinate(i)} onPress={()=>L(g)}><View style={{padding:3}}><Avatar p={first} size={40}/>{compatibleIds.has(first.id)&&<Text accessibilityLabel="High compatibility" style={s.heart}>♥</Text>}<Text style={s.count}>{g.length}</Text></View></Marker>})}</MapView>:<Text>{msg}</Text>}
  <Text>120 open · 180 demo attendees</Text><InstantMatch/><View style={s.bar}><Text style={s.h}>Open to date</Text>{button('120 ›',()=>L(people))}</View><ScrollView horizontal>{people.slice(0,20).map(p=><Pressable key={p.id} onPress={()=>D(p)} style={{alignItems:'center',marginRight:12}}><Avatar p={p}/><Text>{p.name}</Text></Pressable>)}</ScrollView><View style={s.bar}><Text style={s.h}>High compatibility</Text>{button(good.length+' ›',()=>L(good))}</View>{good.slice(0,12).map(row)}</>}</>:tab==='Matches'?<><Text style={s.h}>Matches</Text>{matches.map(i=>{const person=people[i];const dates=history.filter(d=>d.person.id===i);return <View key={i} style={{backgroundColor:'white',borderRadius:18,padding:14,gap:12}}>
  <Pressable style={s.row} onPress={()=>setChat(person)}><Avatar p={person}/><View><Text style={s.bold}>{person.name}</Text><Text>{person.interests.join(' · ')}</Text></View></Pressable>
- <View style={s.bar}>{button('Chat',()=>setChat(person))}{button('⌖  Find',()=>setAction({type:'find',person}))}{dates.length?dates.map(d=><Pressable key={d.id} onPress={()=>setDate(d)}><Text style={s.action}>Analyze date{dates.length>1?' · '+d.when.toLocaleDateString():''}</Text></Pressable>):button('Arrange date',()=>plan(person))}</View></View>})}</>:tab==='Settings'?<><Text style={s.h}>Settings</Text>{button('My profile',()=>T('Second You'))}{button('Location and notification permissions',()=>Linking.openSettings())}</>:<><Text style={s.h}>Second You</Text>
- <View style={s.profileCard}><Text style={s.h}>About Me</Text><Text style={s.bold}>Elena</Text><Text>I design album covers and spend Sundays digging through used records.</Text>
- <Text>Work · Graphic designer</Text><Text>Education · BFA in Visual Communication</Text><Text>Interests · Design and Music</Text><Text style={s.bold}>In my own words</Text>
+ <View style={s.bar}>{button('Chat',()=>setChat(person))}{button('⌖  Find',()=>setAction({type:'find',person}))}{dates.length?dates.map(d=><Pressable key={d.id} onPress={()=>setDate(d)}><Text style={s.action}>Analyze date{dates.length>1?' · '+d.when.toLocaleDateString():''}</Text></Pressable>):button('Arrange date',()=>plan(person))}</View></View>})}</>:tab==='Settings'?<><Text style={s.h}>Settings</Text><Text style={s.bold}>Linked device</Text><View style={s.profileCard}>
+ <View style={{height:190}}><WebView originWhitelist={['*']} scrollEnabled={false} source={bandHTML}/></View><Text>Drag to rotate</Text>
+ <Text style={s.h}>Vexo Band</Text><Text>Qian’s bracelet</Text>
+ <Text>Turn on instant matching in Discover when there's a suitable date nearby. The bracelet shines.</Text></View>{button('My profile',()=>T('Second You'))}{button('Location and notification permissions',()=>Linking.openSettings())}</>:<><Text style={s.h}>Second You</Text>
+ <View style={s.profileCard}><Text style={s.h}>About Me</Text><Text style={s.bold}>Qian</Text><Text>I collect vinyl on Sundays.</Text>
+ <Text>Work · AI Researcher</Text><Text>Education · PhD in human computer interaction</Text><Text>Interests · Design and Music</Text><Text style={s.bold}>In my own words</Text>
  <TextInput multiline accessibilityLabel="In my own words" style={s.profileInput} value={note} onChangeText={N}/></View>
  <View style={s.profileCard}><Text style={s.h}>My Ideal Date</Text><Text style={s.bold}>Who I’d like to meet</Text><TextInput multiline accessibilityLabel="Who I’d like to meet" style={s.profileInput} value={partner} onChangeText={setPartner}/><Text>Looking for · Someone to explore with</Text><Text style={s.bold}>My kind of first date</Text>
  <TextInput multiline accessibilityLabel="My kind of first date" style={s.profileInput} value={ideal} onChangeText={setIdeal}/></View></>}

@@ -1,4 +1,5 @@
 import SwiftUI
+import WebKit
 import UserNotifications
 import MapKit
 import PhotosUI
@@ -31,7 +32,7 @@ struct OpenDateView: View {
         return (try? JSONDecoder().decode([DateProfile].self,from:data))?.filter { !DateProfile.examples.map(\.id).contains($0.id) } ?? []
     }()
     @State private var demoSaved = [DateProfile.examples[1], DemoCrowd.people[3]]
-    @State private var demoProfile = DateProfile(name:"Elena", interests:["Design","Music"], lookingFor:"Someone to explore with", occupation:"Graphic designer", education:"BFA in Visual Communication", personality:"I design album covers and spend Sundays digging through used records.", symbol:"sun.max.fill")
+    @State private var demoProfile = DateProfile(name:"Qian", interests:["Design","Music"], lookingFor:"Someone to explore with", occupation:"AI Researcher", education:"PhD in human computer interaction", personality:"I collect vinyl on Sundays.", symbol:"sun.max.fill")
     @State private var demoSelfNote = "My favorite part of a concert is the walk home talking about the set. I’d love to meet someone who wants to trade playlists and try a new venue."
     @AppStorage("openDate.idealPartner") private var idealPartner = ""
     @State private var demoIdealPartner = "Someone curious and kind who asks follow-up questions, follows through on plans, and can laugh with me when we miss the opening act."
@@ -75,7 +76,7 @@ struct OpenDateView: View {
     private func common(_ p:DateProfile) -> [String] { profile.interests.filter(p.interests.contains) }
     private func score(_ p:DateProfile) -> Int { common(p).count * 2 + (profile.lookingFor == p.lookingFor ? 1 : 0) }
     @State private var scanID = UUID()
-    @State private var approvalMessage: String?
+    @State private var didSignal = false
     private var candidate: Encounter? {
         if demo {
             return alerted.contains(DateProfile.kagen.id) ? nil : Encounter(profile: DateProfile.kagen, strength: -60)
@@ -240,8 +241,17 @@ struct OpenDateView: View {
     private var settings: some View {
         NavigationStack {
             List {
-                LabeledContent("Vexo Signal", value: vexo.status)
-                if let delivery = vexo.delivery { Text(delivery).font(.footnote) }
+                Section("Linked device") {
+                    VStack(alignment: .leading, spacing: 10) {
+                        BraceletPreview().frame(height: 190)
+                        Text("Drag to rotate").font(.caption).foregroundStyle(.secondary)
+                        Text("Vexo Band").font(.title2.bold())
+                        Text("Qian’s bracelet").font(.subheadline).foregroundStyle(.secondary)
+                        Text("Turn on instant matching in Discover when there's a suitable date nearby. The bracelet shines.")
+                            .font(.subheadline)
+                    }.padding(.vertical, 8)
+                    LabeledContent("Vexo Signal", value: vexo.status)
+                }
                 Button("Edit profile") { editing = true }
                 Button("Location and notification permissions") {
                     if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
@@ -443,7 +453,7 @@ struct OpenDateView: View {
                             banner = nil
                             analyzing = false
                             finishedScan = false
-                            if enabled { alerted.removeAll(); approvalMessage = nil }
+                            if enabled { alerted.removeAll(); didSignal = false }
                         }
                     if instant {
                         if let person = banner {
@@ -465,26 +475,21 @@ struct OpenDateView: View {
                                 if person.id == DateProfile.kagen.id, let bio = person.personality {
                                     Text(bio).font(.subheadline)
                                 }
-                                HStack {
-                                    if person.id != DateProfile.kagen.id {
+                                if person.id != DateProfile.kagen.id {
+                                    HStack {
                                         Button("View profile") { detail = person }.buttonStyle(.borderedProminent)
+                                        Button("Pass") { finishedScan = false; analyzing = false; skip(person) }
                                     }
-                                    Button("Pass") { finishedScan = false; analyzing = false; skip(person) }
-                                        .disabled(person.id == DateProfile.kagen.id && approvalMessage == "Sending green signal…")
-                                }
-                                if person.id == DateProfile.kagen.id, let delivery = approvalMessage {
-                                    Text(delivery).font(.footnote).foregroundStyle(.secondary)
                                 }
                             }.padding().frame(maxWidth: .infinity, alignment: .leading)
                                 .background(.white, in: RoundedRectangle(cornerRadius: 18))
                                 .onAppear {
-                                    guard person.id == DateProfile.kagen.id, approvalMessage == nil else { return }
-                                    approvalMessage = "Sending green signal…"
+                                    guard person.id == DateProfile.kagen.id, !didSignal else { return }
+                                    didSignal = true
                                     let currentScan = scanID
                                     Task {
                                         guard currentScan == scanID, instant, open else { return }
-                                        let message = await vexo.approveBracelet()
-                                        if currentScan == scanID { approvalMessage = message }
+                                        _ = await vexo.approveBracelet()
                                     }
                                 }
                         } else {
@@ -1155,4 +1160,17 @@ private struct DateDebrief: View {
             .toolbarColorScheme(.dark, for:.navigationBar)
             .sheet(isPresented:$planning) { MatchDatePlanner(person:date.person, demo:demo, followUpID: String(Int(date.time.timeIntervalSince1970))) }
     }
+}
+
+private struct BraceletPreview: UIViewRepresentable {
+    func makeUIView(context: Context) -> WKWebView {
+        let view = WKWebView()
+        view.scrollView.isScrollEnabled = false
+        if let url = Bundle.main.url(forResource: "bandPreview", withExtension: "js"),
+           let renderer = try? String(contentsOf: url, encoding: .utf8) {
+            view.loadHTMLString("<meta name='viewport' content='width=device-width,initial-scale=1'><body><script>" + renderer + "\ndrawBand()</script></body>", baseURL: nil)
+        }
+        return view
+    }
+    func updateUIView(_ view: WKWebView, context: Context) {}
 }
