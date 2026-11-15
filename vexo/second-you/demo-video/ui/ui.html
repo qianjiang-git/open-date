@@ -1,0 +1,140 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Second You UI</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter+Tight:wght@400;500;600&display=swap">
+<style>
+:root { --bg:#120d12; --panel:#1d161d; --line:#3a2b38; --fg:#f6eef3; --muted:#b9a3b3; --pink:#ff6fa8; --pink2:#ffb3cf; --ok:#7be0b0; }
+* { box-sizing: border-box; }
+html, body { margin:0; width:1280px; height:720px; overflow:hidden; background: radial-gradient(1200px 600px at 75% 40%, #2a1424 0%, var(--bg) 60%); color:var(--fg); font-family:"Inter Tight", system-ui, sans-serif; }
+.stage { display:grid; grid-template-columns: 1fr 360px; gap:70px; padding:30px 90px; height:720px; align-items:center; }
+.copy h1 { font-family:Fraunces, Georgia, serif; font-weight:400; font-size:54px; line-height:1.05; margin:0 0 18px; letter-spacing:-0.01em; }
+.copy p { font-size:21px; color:var(--muted); line-height:1.45; margin:0; max-width:520px; }
+.eyebrow { font-size:14px; letter-spacing:.14em; text-transform:uppercase; color:var(--pink); margin-bottom:16px; font-weight:600; }
+.phone { width:340px; height:668px; border-radius:46px; background:#0b080b; border:2px solid #3b2c39; box-shadow:0 30px 80px rgba(255,111,168,.12), 0 0 0 10px #1a1219; padding:18px 16px; position:relative; overflow:hidden; display:flex; flex-direction:column; gap:10px; }
+.notch { width:110px; height:26px; background:#000; border-radius:14px; margin:0 auto 4px; }
+.bar { display:flex; align-items:center; gap:10px; padding:6px 4px 10px; border-bottom:1px solid var(--line); }
+.av { width:38px; height:38px; border-radius:50%; background-size:cover; background-position:center 30%; flex:none; }
+.blur { filter: blur(9px) saturate(.6); }
+.bar .t { font-weight:600; font-size:15px; }
+.bar .s { font-size:12px; color:var(--muted); }
+.lock { margin-left:auto; font-size:11px; color:var(--pink2); border:1px solid #5a3a50; padding:3px 8px; border-radius:20px; }
+.chips { display:flex; gap:6px; }
+.chip { font-size:11px; padding:4px 8px; border-radius:20px; border:1px solid var(--line); color:var(--muted); }
+.chip.on { border-color:var(--pink); color:var(--fg); background:rgba(255,111,168,.12); }
+.chat { flex:1; display:flex; flex-direction:column; gap:8px; overflow:hidden; justify-content:flex-end; }
+.msg { font-size:13.5px; line-height:1.38; padding:9px 12px; border-radius:16px; max-width:84%; background:var(--panel); border:1px solid var(--line); }
+.msg .w { display:block; font-size:10.5px; color:var(--muted); margin-bottom:2px; letter-spacing:.04em; text-transform:uppercase; }
+.msg.r { align-self:flex-end; background:#2b1726; border-color:#4a2a41; }
+.meter { border:1px solid var(--line); border-radius:16px; padding:10px 12px; background:var(--panel); }
+.meter .row { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); }
+.meter .v { font-family:Fraunces, serif; font-size:26px; color:var(--fg); }
+.track { height:8px; background:#2c222b; border-radius:6px; margin-top:6px; overflow:hidden; }
+.fill { height:100%; background:linear-gradient(90deg, #ff8fbb, var(--pink)); border-radius:6px; }
+.card { border:1px solid var(--line); border-radius:20px; background:var(--panel); padding:16px; display:flex; flex-direction:column; gap:10px; }
+.card .big { font-family:Fraunces, serif; font-size:30px; }
+.btns { display:flex; gap:8px; }
+.btn { flex:1; text-align:center; padding:11px; border-radius:14px; font-weight:600; font-size:14px; border:1px solid var(--line); color:var(--fg); }
+.btn.p { background:var(--pink); color:#1a0710; border-color:var(--pink); }
+.btn.tap { box-shadow:0 0 0 6px rgba(255,111,168,.35); transform:scale(.97); }
+.pair { display:flex; justify-content:center; gap:14px; margin:10px 0 2px; }
+.pair .av { width:96px; height:96px; border:2px solid var(--pink); }
+.small { font-size:12.5px; color:var(--muted); line-height:1.45; }
+.statgrid { display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; margin-top:28px; }
+.stat { border:1px solid var(--line); border-radius:22px; padding:22px; background:rgba(29,22,29,.8); }
+.stat .n { font-family:Fraunces, serif; font-size:56px; line-height:1; }
+.stat .l { color:var(--muted); font-size:16px; margin-top:10px; line-height:1.35; }
+.full { padding:60px 90px; }
+.row2 { display:flex; justify-content:space-between; font-size:13.5px; padding:8px 0; border-bottom:1px solid var(--line); }
+.row2:last-child { border-bottom:0; }
+.row2 b { font-weight:600; }
+.ok { color:var(--ok); }
+.endcard { height:720px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; text-align:center; }
+.endcard h1 { font-family:Fraunces, serif; font-weight:400; font-size:84px; margin:0; }
+.endcard p { font-size:26px; color:var(--muted); margin:0; }
+.dot { width:16px; height:16px; border-radius:50%; background:var(--pink); box-shadow:0 0 30px 8px rgba(255,111,168,.55); }
+</style></head>
+<body><div id="root"></div>
+<script>
+const HER = "her.png", HIM = "him.png";
+const L = [
+  ["his", "Hey! I'd make a treble joke to start us off on the right note, but I'll spare you. How's your week?"],
+  ["her", "No please, I love treble! Week's been busy wrangling high schoolers. Are you a musician or just naturally sharp?"],
+  ["his", "Busted, I teach piano around the city."],
+  ["his", "Honest answers: no kids for me. Not religious, drink socially, zero smoking. Open about where life goes."],
+  ["her", "No kids is music to my ears! I'm pretty anchored to SF. Sounds like we're in harmony on the big stuff."],
+  ["his", "Natural wine at Ruby, Saturday at 7?"],
+  ["her", "You had me at natural wine."],
+];
+// state -> [messages shown, chips done, confidence]
+const A = { a1:[1,0,0.38], a2:[3,1,0.61], a3:[5,2,0.74], a4:[7,3,0.82] };
+function msgs(n){ return L.slice(0,n).map(([w,t]) => `<div class="msg ${w==='her'?'r':''}"><span class="w">${w==='her'?'Her agent':'His agent'}</span>${t}</div>`).join(""); }
+function chips(done){ return ["First chat","Plan a date","Future talk"].map((c,i)=>`<span class="chip ${i<done?'on':''}">${i<done?'✓ ':''}${c}</span>`).join(""); }
+function agents(s){
+  const [n,d,c] = A[s];
+  return `<div class="stage"><div class="copy"><div class="eyebrow">Agent ↔ Agent · private</div>
+  <h1>Your agents meet first.</h1><p>They test chemistry across three conversations. Photos, names and details stay hidden.</p></div>
+  <div class="phone"><div class="notch"></div>
+   <div class="bar"><div class="av blur" style="background-image:url(${HIM})"></div><div><div class="t">Match #2417</div><div class="s">Agents talking · you're not in this chat</div></div><span class="lock">Hidden</span></div>
+   <div class="chips">${chips(d)}</div>
+   <div class="chat">${msgs(n)}</div>
+   <div class="meter"><div class="row"><span>Chemistry confidence</span><span>${d}/3 scenarios</span></div><div class="v">${Math.round(c*100)}%</div><div class="track"><div class="fill" style="width:${c*100}%"></div></div></div>
+  </div></div>`;
+}
+function reveal(s){
+  const open = s === "b2";
+  return `<div class="stage"><div class="copy"><div class="eyebrow">You decide</div>
+  <h1>${open ? "You both said yes." : "Strong match. Your call."}</h1><p>${open ? "Now you can see each other — and say hi." : "Read what your agents talked about. Nothing is shared until you both agree."}</p></div>
+  <div class="phone"><div class="notch"></div>
+   <div class="card"><div class="small">Second You found someone</div><div class="big">82% chemistry</div>
+    <div class="pair"><div class="av ${open?'':'blur'}" style="background-image:url(${HER})"></div><div class="av ${open?'':'blur'}" style="background-image:url(${HIM})"></div></div>
+    <div class="small">${open ? "Ethan · 30 · teaches piano · loves natural wine" : "Shared: no kids, staying in SF, wine not smoking, same sense of humor (puns)."}</div>
+    <div class="btns">${open ? `<div class="btn p">Say hi</div>` : `<div class="btn">Read their chat</div><div class="btn p ${s==='b1t'?'tap':''}">Continue</div>`}</div>
+   </div>
+   <div class="card"><div class="small">Why it matched</div>
+    <div class="row2"><span>Values & dealbreakers</span><b class="ok">Aligned</b></div>
+    <div class="row2"><span>Humor landing</span><b>8 / 10</b></div>
+    <div class="row2"><span>Curiosity, both ways</span><b>8 / 10</b></div>
+    <div class="row2"><span>Want a next date</span><b>90%</b></div>
+   </div>
+  </div></div>`;
+}
+function stats(){
+  return `<div class="full"><div class="eyebrow">Does it work? We simulated it.</div>
+  <h1 style="font-family:Fraunces,serif;font-weight:400;font-size:52px;margin:0;max-width:980px">20 virtual people. 246 agent-to-agent dates. An independent judge from a different model family.</h1>
+  <div class="statgrid">
+   <div class="stat"><div class="n">0.73</div><div class="l">rank correlation between the judge's chemistry score and true compatibility</div></div>
+   <div class="stat"><div class="n">41/43</div><div class="l">dealbreakers caught — kids, faith, moving cities</div></div>
+   <div class="stat"><div class="n">0.22</div><div class="l">for agents rating themselves. That's why the judge is separate.</div></div>
+  </div></div>`;
+}
+function plan(s){
+  const done = s === "d2";
+  return `<div class="stage"><div class="copy"><div class="eyebrow">Your agent plans it</div>
+  <h1>First date, handled.</h1><p>Restaurant, time and ride, planned for both of you. Nothing is booked until you tap Confirm.</p></div>
+  <div class="phone"><div class="notch"></div>
+   <div class="card"><div class="small">First date</div><div class="big">Saturday · 7:00 PM</div>
+    <div class="row2"><span>Ruby Wine, Potrero Hill</span><b>Table for 2</b></div>
+    <div class="row2"><span>Ride there</span><b>Robotaxi · 6:40 PM</b></div>
+    <div class="row2"><span>Ethan</span><b class="ok">Confirmed</b></div>
+    <div class="btns"><div class="btn ${done?'':'p'} ${s==='d1t'?'tap':''}">${done ? '✓ Booked — see you there' : 'Confirm'}</div></div>
+   </div>
+   <div class="small" style="padding:0 6px">${done ? "Table held and ride requested after your tap." : "Your agent never pays or books without you."}</div>
+  </div></div>`;
+}
+function rate(){
+  return `<div class="stage"><div class="copy"><div class="eyebrow">After the date</div>
+  <h1>You both rate it.</h1><p>You, and your agent who listened with both of your consent. A high score plans date #2.</p></div>
+  <div class="phone"><div class="notch"></div>
+   <div class="card"><div class="small">How was it?</div>
+    <div class="row2"><span>You</span><b>9 / 10</b></div>
+    <div class="row2"><span>Your agent</span><b>8.7 / 10</b></div>
+    <div class="row2"><span>Ethan</span><b class="ok">Wants to meet again</b></div>
+   </div>
+   <div class="card"><div class="small">Date #2 suggestion</div><div class="big">Thu · 8:00 PM</div><div class="small">Live jazz at Black Cat — you both mentioned it.</div>
+    <div class="btns"><div class="btn">Not yet</div><div class="btn p">Plan it</div></div></div>
+  </div></div>`;
+}
+function end(){ return `<div class="endcard"><div class="dot"></div><h1>Second You</h1><p>Your agent finds them. You fall in love.</p><p style="font-size:16px">Built at VexoHacks · Vexo Band + Second You agents</p></div>`; }
+const s = new URLSearchParams(location.search).get("s") || "a1";
+document.getElementById("root").innerHTML =
+  s.startsWith("a") ? agents(s) : s.startsWith("b") ? reveal(s) : s === "c" ? stats() : s.startsWith("d") ? plan(s) : s === "e" ? rate() : end();
+</script></body></html>

@@ -1,0 +1,44 @@
+# Render Blueprint for the Vexo Match demo.
+#
+# One free Python web service serves the phone UI and /api/* from the same origin.
+# One free Postgres database stores all shared state. Bluetooth hubs stay on laptops.
+#
+# Deploy: Render Dashboard -> New -> Blueprint -> select this repository.
+# The management API key is NOT used here and must never be committed.
+
+databases:
+  - name: vexo-postgres
+    plan: free
+    region: oregon
+    databaseName: vexo
+    user: vexo
+    postgresMajorVersion: "17"
+
+services:
+  - type: web
+    name: vexo-match
+    runtime: python
+    plan: free
+    region: oregon
+    branch: main
+    autoDeployTrigger: "off"
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: uvicorn --factory server.asgi:serve --host 0.0.0.0 --port $PORT
+    healthCheckPath: /readyz
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.6"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: APP_ENV
+        value: hosted
+      # Use "simulated" for a hardware-free rehearsal. Change to "real" for the event
+      # with physical bands, or "single_laptop" for a mirrored single-laptop demo.
+      - key: VEXO_DEMO_MODE
+        value: simulated
+      - key: SCORER_PROVIDER
+        value: deterministic
+      - key: DATABASE_URL
+        fromDatabase:
+          name: vexo-postgres
+          property: connectionString

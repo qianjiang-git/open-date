@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vexo Match</title>
+<link rel="stylesheet" href="/ui/styles.css">
+</head>
+<body>
+<main>
+  <div class="row">
+    <div>
+      <h1 id="name">Vexo Match</h1>
+      <div class="small muted" id="band">Loading…</div>
+    </div>
+    <span class="pill" id="hub">hub</span>
+  </div>
+
+  <section class="card">
+    <div class="row">
+      <div>
+        <b>Open to dating</b>
+        <div class="small muted" id="status-note">Paused: nobody can match with you.</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="open"><span></span></label>
+    </div>
+  </section>
+
+  <section class="card" id="match-card">
+    <h2>Match</h2>
+    <div id="match">No match right now. Stay open and walk around.</div>
+  </section>
+
+  <section class="card">
+    <h2>Notifications</h2>
+    <ul class="inbox" id="inbox"><li class="muted">Nothing yet.</li></ul>
+  </section>
+
+  <section class="card">
+    <h2>Your profile</h2>
+    <div id="profile" class="small"></div>
+  </section>
+
+  <section class="card">
+    <h2>Tell the AI about your day</h2>
+    <textarea id="note" placeholder="I went bouldering this morning and played guitar at an open mic…"></textarea>
+    <div class="actions"><button id="send-note">Save note</button></div>
+    <div id="proposals"></div>
+    <div class="small muted">Notes only ever create a suggested profile change. You approve it first.</div>
+  </section>
+</main>
+<div class="toast" id="toast" hidden></div>
+<script src="/ui/phone.js"></script>
+</body>
+</html>
