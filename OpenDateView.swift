@@ -15,8 +15,8 @@ struct OpenDateView: View {
     @State private var floorCode = ""
     @State private var building = DemoBuilding.exchange
     @State private var currentRoom = 0
-    @State private var demo = true
-    @State private var open = true
+    private let demo = false
+    @State private var open = false
     @State private var analyzing = false
     @State private var finishedScan = false
     @State private var instant = false
@@ -27,10 +27,12 @@ struct OpenDateView: View {
     @State private var editing = false
     @State private var detail: DateProfile?
     @State private var likes: Set<UUID> = []
-    @State private var liveSaved: [DateProfile] = {
-        guard let data=UserDefaults.standard.data(forKey:"openDate.matches") else {return []}
-        return (try? JSONDecoder().decode([DateProfile].self,from:data))?.filter { !DateProfile.examples.map(\.id).contains($0.id) } ?? []
-    }()
+    let account: BetaAccount
+    let signOut: () -> Void
+    let store: UserDefaults
+    @StateObject private var linkedIn = LinkedInConnection()
+    @AppStorage("openDate.linkedinImported") private var importedLinkedIn = false
+    @State private var liveSaved: [DateProfile]
     @State private var demoSaved = [DateProfile.examples[1], DemoCrowd.people[3]]
     @State private var demoProfile = DateProfile(name:"Qian", interests:["Design","Music"], lookingFor:"Someone to explore with", occupation:"AI Researcher", education:"PhD in human computer interaction", personality:"I collect vinyl on Sundays.", symbol:"sun.max.fill")
     @State private var demoSelfNote = "My favorite part of a concert is the walk home talking about the set. I’d love to meet someone who wants to trade playlists and try a new venue."
@@ -51,10 +53,19 @@ struct OpenDateView: View {
     @AppStorage("openDate.encounterReflection") private var encounterReflection=""
     @State private var working=false
     @State private var distance = 0.35
-    @State private var liveProfile: DateProfile = {
-        if let data = UserDefaults.standard.data(forKey:"openDate.profile"), let saved = try? JSONDecoder().decode(DateProfile.self,from:data) { return saved }
-        return DateProfile(name:"Guest",interests:["Design","Music"],lookingFor:"Someone to explore with",symbol:"sun.max.fill")
-    }()
+    @State private var liveProfile: DateProfile
+    init(account: BetaAccount, signOut: @escaping () -> Void) {
+        self.account = account
+        self.signOut = signOut
+        let store = account.store
+        self.store = store
+        let existing = store.data(forKey: "openDate.profile").flatMap { try? JSONDecoder().decode(DateProfile.self, from: $0) }
+        let initial = existing ?? DateProfile(name: account.name, interests: [], lookingFor: "Someone to explore with", symbol: "person.circle")
+        _liveProfile = State(initialValue: initial)
+        _liveSaved = State(initialValue: store.data(forKey: "openDate.matches").flatMap { try? JSONDecoder().decode([DateProfile].self, from: $0) } ?? [])
+        if existing == nil { store.set(try? JSONEncoder().encode(initial), forKey: "openDate.profile") }
+        _tab = State(initialValue: existing == nil ? 1 : 0)
+    }
     private var nearby: [Encounter] {
         guard open else { return [] }
         let floorPeople = building.people.enumerated().filter { !roomOnly || $0.offset == currentRoom }.map(\.element)
@@ -95,15 +106,14 @@ struct OpenDateView: View {
     }
     private func leave() { likes=[]; open=false; instant=false; banner=nil; selected=nil; dismissed=[]; alerted=[]; room.stop() }
     private func find(_ p:DateProfile) { banner=nil; distance=0.35; selected=p }
-    private func skip(_ p:DateProfile) { vexo.send(.reject, to: p.id == DateProfile.kagen.id ? VexoSignal.braceletOwner : p.name); dismissed.insert(p.id); banner=nil; selected=nil }
+    private func skip(_ p:DateProfile) { dismissed.insert(p.id); banner=nil; selected=nil }
     private func remember(_ p:DateProfile) {
         guard !saved.contains(where:{$0.id==p.id}) else { return }
         if demo { demoSaved.append(p); return }
         liveSaved.append(p)
-        UserDefaults.standard.set(try? JSONEncoder().encode(liveSaved),forKey:"openDate.matches")
+        store.set(try? JSONEncoder().encode(liveSaved),forKey:"openDate.matches")
     }
     private func like(_ p:DateProfile) {
-        vexo.send(.accept, to: p.name)
         likes.insert(p.id)
         if demo { remember(p) }
         else { room.like(p.id); if room.incoming.contains(p.id) {remember(p)} }
@@ -116,9 +126,6 @@ struct OpenDateView: View {
             matches.tabItem{Label("Matches",systemImage:"heart")}.tag(2)
             settings.tabItem{Label("Settings",systemImage:"gearshape")}.tag(3)
         }.tint(rose).preferredColorScheme(.light)
-        .task(id: scenePhase == .active ? profile.name : "") {
-            if scenePhase == .active { await vexo.connect(name: profile.name) }
-        }
         .task(id: saved.map(\.id)) { await prepareExchanges() }
         .onChange(of:room.incoming){ ids in
             for p in nearby.map(\.profile) where ids.contains(p.id) && likes.contains(p.id) {remember(p)}
@@ -222,7 +229,7 @@ struct OpenDateView: View {
             guard !Task.isCancelled else { return }
             guard !demo, exchanges[person.id] == nil else { continue }
             let key = "openDate.agentExchange." + person.id.uuidString
-            if !demo, let data = UserDefaults.standard.data(forKey: key),
+            if !demo, let data = store.data(forKey: key),
                let cached = try? JSONDecoder().decode(AgentExchange.self, from: data) {
                 exchanges[person.id] = cached
                 continue
@@ -231,7 +238,7 @@ struct OpenDateView: View {
             guard !Task.isCancelled else { return }
             exchanges[person.id] = transcript
             partial[person.id] = nil
-            if !demo { UserDefaults.standard.set(try? JSONEncoder().encode(transcript), forKey: key) }
+            if !demo { store.set(try? JSONEncoder().encode(transcript), forKey: key) }
         }
     }
 
@@ -241,17 +248,11 @@ struct OpenDateView: View {
     private var settings: some View {
         NavigationStack {
             List {
-                Section("Linked device") {
-                    VStack(alignment: .leading, spacing: 10) {
-                        BraceletPreview().frame(height: 190)
-                        Text("Drag to rotate").font(.caption).foregroundStyle(.secondary)
-                        Text("Vexo Band").font(.title2.bold())
-                        Text("Qian’s bracelet").font(.subheadline).foregroundStyle(.secondary)
-                        Text("Turn on instant matching in Discover when there's a suitable date nearby. The bracelet shines.")
-                            .font(.subheadline)
-                    }.padding(.vertical, 8)
-                    LabeledContent("Vexo Signal", value: vexo.status)
+                Section("Connections") {
+                    LabeledContent("Google", value: account.email)
+                    linkedInButton
                 }
+                Button("Sign out") { room.stop(); signOut() }
                 Button("Edit profile") { editing = true }
                 Button("Location and notification permissions") {
                     if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
@@ -261,7 +262,7 @@ struct OpenDateView: View {
     }
     @State private var reviewingMatch: DateProfile?
     @State private var pastDates: [ReviewDate] = []
-    private func refreshDates() { pastDates = DateHistory.load(people: saved, demo: demo) }
+    private func refreshDates() { pastDates = DateHistory.load(store: store, people: saved, demo: demo) }
 
     private var matches: some View {
         NavigationStack {
@@ -297,12 +298,12 @@ struct OpenDateView: View {
                         let id = saved[index].id
                         exchanges[id] = nil
                         partial[id] = nil
-                        if !demo { UserDefaults.standard.removeObject(forKey: "openDate.agentExchange." + id.uuidString) }
+                        if !demo { store.removeObject(forKey: "openDate.agentExchange." + id.uuidString) }
                     }
                     if demo { demoSaved.remove(atOffsets: offsets) }
                     else {
                         liveSaved.remove(atOffsets: offsets)
-                        UserDefaults.standard.set(try? JSONEncoder().encode(liveSaved), forKey: "openDate.matches")
+                        store.set(try? JSONEncoder().encode(liveSaved), forKey: "openDate.matches")
                     }
                 }
             }.navigationTitle("Matches")
@@ -312,8 +313,8 @@ struct OpenDateView: View {
                     NavigationStack {
                         let dates = pastDates.filter { $0.person.id == person.id }
                         Group {
-                            if dates.count == 1, let date = dates.first { DateDebrief(date: date, demo: demo) }
-                            else { DateHistory(dates: dates, demo: demo) }
+                            if dates.count == 1, let date = dates.first { DateDebrief(store: store, date: date, demo: demo) }
+                            else { DateHistory(store: store, dates: dates, demo: demo) }
                         }.toolbar { Button("Done") { reviewingMatch = nil } }
                     }
                 }
@@ -323,7 +324,7 @@ struct OpenDateView: View {
                             .toolbar { Button("Done") { chatMatch = nil } }
                     }
                 }
-                .sheet(item: $planningMatch, onDismiss: refreshDates) { person in MatchDatePlanner(person: person, demo: demo) }
+                .sheet(item: $planningMatch, onDismiss: refreshDates) { person in MatchDatePlanner(store: store, person: person, demo: demo) }
         }
     }
 
@@ -377,6 +378,7 @@ struct OpenDateView: View {
                             if let bio = profile.personality, !bio.isEmpty { Text(bio).font(.subheadline) }
                         }
                     }
+                    linkedInButton
                     if let job = profile.occupation, !job.isEmpty { LabeledContent("Work", value: job) }
                     if let school = profile.education, !school.isEmpty { LabeledContent("Education", value: school) }
                     LabeledContent("Interests", value: profile.interests.joined(separator: " · "))
@@ -578,6 +580,25 @@ struct OpenDateView: View {
         if let work = person.occupation, !work.isEmpty { Label(work, systemImage: "briefcase") }
         if let school = person.education, !school.isEmpty { Label(school, systemImage: "graduationcap") }
     }
+    private var linkedInButton: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Button(linkedIn.busy ? "Connecting…" : importedLinkedIn ? "Refresh from LinkedIn" : "Connect LinkedIn") {
+                Task {
+                    await linkedIn.importProfile(subject: account.id) { imported, photo in
+                        if let name = imported.name, !name.isEmpty { liveProfile.name = String(name.prefix(40)) }
+                        if let photo { avatarBytes = photo }
+                        importedLinkedIn = true
+                        store.set(try? JSONEncoder().encode(liveProfile), forKey: "openDate.profile")
+                        editing = false
+                        tab = 1
+                        if open { startOnFloor() }
+                    }
+                }
+            }.disabled(linkedIn.busy)
+            Text(linkedIn.message.isEmpty ? "Automatically add your LinkedIn name and photo to Second You." : linkedIn.message)
+                .font(.footnote).foregroundStyle(.secondary)
+        }
+    }
     private var editor: some View {
         NavigationStack {Form {
             Section {
@@ -604,7 +625,7 @@ struct OpenDateView: View {
         }.onDisappear {
             profileBinding.wrappedValue.name=String(profile.name.trimmingCharacters(in:.whitespacesAndNewlines).prefix(40));if profile.name.isEmpty {profileBinding.wrappedValue.name="Guest"}
             guard !demo else {return}
-            UserDefaults.standard.set(try? JSONEncoder().encode(profile),forKey:"openDate.profile")
+            store.set(try? JSONEncoder().encode(profile),forKey:"openDate.profile")
             if open && !demo {startOnFloor()}
         }
     }
@@ -936,6 +957,7 @@ private struct DeviceMap: View {
 }
 
 private struct MatchDatePlanner: View {
+    let store: UserDefaults
     let person: DateProfile
     let demo: Bool
     @Environment(\.dismiss) private var dismiss
@@ -947,7 +969,7 @@ private struct MatchDatePlanner: View {
     private var key: String { "openDate.datePlan." + person.id.uuidString + (followUpID.map { "." + $0 } ?? "") }
 
     private func prepare() async {
-        let defaults = UserDefaults.standard
+        let defaults = store
         if let saved = defaults.dictionary(forKey: key),
            let date = saved["time"] as? Date, let venue = saved["place"] as? String {
             time = date
@@ -1001,7 +1023,7 @@ private struct MatchDatePlanner: View {
                             LabeledContent(person.name, value: demo ? "Demo match" : "Awaiting confirmation")
                             Button {
                                 confirmed = true
-                                UserDefaults.standard.set(["place": place, "time": time, "confirmed": true], forKey: key)
+                                store.set(["place": place, "time": time, "confirmed": true], forKey: key)
                             } label: {
                                 Text(confirmed ? "Confirmed by you" : "Confirm").fontWeight(.semibold).frame(maxWidth: .infinity).padding(12)
                             }.background(pink, in: RoundedRectangle(cornerRadius: 12)).foregroundStyle(.black).disabled(confirmed)
@@ -1028,14 +1050,15 @@ private struct ReviewDate: Identifiable {
 }
 
 private struct DateHistory: View {
+    let store: UserDefaults
     let dates: [ReviewDate]
     let demo: Bool
 
-    static func load(people: [DateProfile], demo: Bool) -> [ReviewDate] {
+    static func load(store: UserDefaults, people: [DateProfile], demo: Bool) -> [ReviewDate] {
         var history: [ReviewDate] = []
         for person in people {
             let prefix = "openDate.datePlan." + person.id.uuidString
-            for (key, value) in UserDefaults.standard.dictionaryRepresentation() where key == prefix || key.hasPrefix(prefix + ".") {
+            for (key, value) in store.dictionaryRepresentation() where key == prefix || key.hasPrefix(prefix + ".") {
                 guard let plan = value as? [String: Any], plan["confirmed"] as? Bool == true,
                       let time = plan["time"] as? Date, time <= Date(), let place = plan["place"] as? String else { continue }
                 history.append(ReviewDate(id: key, person: person, time: time, place: place))
@@ -1043,8 +1066,8 @@ private struct DateHistory: View {
         }
         if demo, people.contains(where: { $0.id == DemoCrowd.people[3].id }) {
             let key = "openDate.sampleEncounterDate"
-            let time = UserDefaults.standard.object(forKey: key) as? Date ?? Date().addingTimeInterval(-86400)
-            UserDefaults.standard.set(time, forKey: key)
+            let time = store.object(forKey: key) as? Date ?? Date().addingTimeInterval(-86400)
+            store.set(time, forKey: key)
             history.append(ReviewDate(id: "sample-alex", person: DemoCrowd.people[3], time: time, place: "Record fair · Demo date"))
         }
         return history.sorted { $0.time > $1.time }
@@ -1055,7 +1078,7 @@ private struct DateHistory: View {
                 if dates.isEmpty { Text("After a confirmed date has passed, you can reflect on it here.") }
                 ForEach(dates) { date in
                     NavigationLink {
-                        DateDebrief(date: date, demo: demo)
+                        DateDebrief(store: store, date: date, demo: demo)
                     } label: {
                         HStack(spacing: 12) {
                             ProfilePortrait(person: date.person, size: 50)
@@ -1072,6 +1095,7 @@ private struct DateHistory: View {
 }
 
 private struct DateDebrief: View {
+    let store: UserDefaults
     struct Reflection: Codable {
         var turns: [ReviewTurn] = []
         var idea: String?
@@ -1086,15 +1110,16 @@ private struct DateDebrief: View {
     @State private var planning = false
     @FocusState private var typing: Bool
     private var key: String { "openDate.review." + date.id }
-    init(date: ReviewDate, demo: Bool) {
+    init(store: UserDefaults, date: ReviewDate, demo: Bool) {
+        self.store = store
         self.date = date
         self.demo = demo
-        let data = UserDefaults.standard.data(forKey: "openDate.review." + date.id)
+        let data = store.data(forKey: "openDate.review." + date.id)
         var stored = data.flatMap { try? JSONDecoder().decode(Reflection.self, from: $0) } ?? Reflection()
         if stored.idea == nil { stored.idea = stored.turns.map(\.note).joined(separator: "\n\n") }
         _review = State(initialValue: stored)
     }
-    private func save() { UserDefaults.standard.set(try? JSONEncoder().encode(review), forKey: key) }
+    private func save() { store.set(try? JSONEncoder().encode(review), forKey: key) }
     private let pink = Color(red: 1, green: 0.66, blue: 0.84)
     var body: some View {
         ScrollViewReader { reader in
@@ -1158,7 +1183,7 @@ private struct DateDebrief: View {
         }.background(LinearGradient(colors:[Color(red:0.10,green:0.07,blue:0.17),Color(red:0.19,green:0.11,blue:0.25)], startPoint:.topLeading,endPoint:.bottomTrailing).ignoresSafeArea())
             .foregroundStyle(.white).navigationTitle("Analyze Date").navigationBarTitleDisplayMode(.inline)
             .toolbarColorScheme(.dark, for:.navigationBar)
-            .sheet(isPresented:$planning) { MatchDatePlanner(person:date.person, demo:demo, followUpID: String(Int(date.time.timeIntervalSince1970))) }
+            .sheet(isPresented:$planning) { MatchDatePlanner(store: store, person:date.person, demo:demo, followUpID: String(Int(date.time.timeIntervalSince1970))) }
     }
 }
 

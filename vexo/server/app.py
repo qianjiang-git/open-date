@@ -18,6 +18,7 @@ from . import eligibility, lifecycle, presence, profiler
 from .config import PALETTE_NAMES, Config
 from .db import Database, dumps, hash_token, loads, new_id
 from . import signal_api
+from .linkedin_import import router as linkedin_import_router
 from .schemas import (DatingStatus, DemoSighting, PreferencesEdit, ProfileEdit, Respond, Tick,
                       VoiceNote)
 from .worker import Engine
@@ -39,6 +40,7 @@ def create_app(cfg: Config | None = None, db: Database | None = None, start_work
             task.cancel()
 
     app = FastAPI(title="Vexo Match", lifespan=lifespan)
+    app.include_router(linkedin_import_router)
     app.state.db, app.state.cfg, app.state.engine = db, cfg, engine
 
     # ------------------------------------------------------------ auth
