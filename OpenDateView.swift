@@ -8,6 +8,7 @@ struct OpenDateView: View {
     private let plum = Color(red:0.22, green:0.10, blue:0.17)
     private let rose = Color(red:0.64, green:0.18, blue:0.31)
     @StateObject private var room = NearbyRoom()
+    @StateObject private var vexo = VexoSignal()
     @State private var roomOnly = false
     @State private var floorCode = ""
     @State private var building = DemoBuilding.exchange
@@ -79,7 +80,7 @@ struct OpenDateView: View {
     }
     private func leave() { likes=[]; open=false; instant=false; banner=nil; selected=nil; dismissed=[]; alerted=[]; room.stop() }
     private func find(_ p:DateProfile) { banner=nil; distance=0.35; selected=p }
-    private func skip(_ p:DateProfile) { dismissed.insert(p.id); banner=nil; selected=nil }
+    private func skip(_ p:DateProfile) { vexo.send("reject", to:p.name); dismissed.insert(p.id); banner=nil; selected=nil }
     private func remember(_ p:DateProfile) {
         guard !saved.contains(where:{$0.id==p.id}) else { return }
         if demo { demoSaved.append(p); return }
@@ -87,7 +88,7 @@ struct OpenDateView: View {
         UserDefaults.standard.set(try? JSONEncoder().encode(liveSaved),forKey:"openDate.matches")
     }
     private func like(_ p:DateProfile) {
-        likes.insert(p.id)
+        likes.insert(p.id); vexo.send("accept", to:p.name)
         if demo { remember(p) }
         else { room.like(p.id); if room.incoming.contains(p.id) {remember(p)} }
         detail=nil
@@ -99,6 +100,8 @@ struct OpenDateView: View {
             matches.tabItem{Label("Matches",systemImage:"heart")}.tag(2)
             journal(afterMeeting:true).tabItem{Label("Analyze",systemImage:"text.bubble")}.tag(3)
         }.tint(rose).preferredColorScheme(.light)
+        .onAppear { vexo.start(name:profile.name) }
+        .onChange(of:profile.name) { vexo.start(name:$0) }
         .onChange(of:room.incoming){ ids in
             for p in nearby.map(\.profile) where ids.contains(p.id) && likes.contains(p.id) {remember(p)}
         }
